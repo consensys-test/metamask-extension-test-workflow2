@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Uncategorized
 
+- updated changelog and generated feature test plan
+- Added arbitrary commit to create commit.csv file
+- bump semvar version to 11.11.0
+- INFRA-2687-Use Updated test version of github-tools
 - Commit with message to match regex ([#3](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/3))
 - Added arbitrary commit to create commit.csv file
 - bump semvar version to 11.11.0
