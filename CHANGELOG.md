@@ -1,4 +1,5 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -6,8 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [999.7.0]
+
+### Uncategorized
+
+- bump semvar version to 999.7.0
+- Just another test ([#1001](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/1001))
+- Test branch ([#19](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/19))
+- Test branch ([#18](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/18))
+- Test fix for workflows not taking PR 2
+- Return to old version for testing
+- INFRA-2687-Use Updated test version of github-tools
+
 ## [13.1.0]
+
 ### Added
+
 - feat: inform users using social login when their password got updated in another instance of the wallet (#34757)
 - feat: use websockets instead of polling to automatically update Solana transactions and token balances (#34620)
 - feat: enable notifications by default for users (#34693)
@@ -16,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Add buttons to test error capture (#34386)
 
 ### Changed
+
 - update: more seamless and user-friendly experience for users interacting with Trezor devices (#33834)
 - update: adopt fixed spacing between the account avatar and its details rows (#34689)
 - update: polish welcome page copywriting and styles (#34621)
@@ -37,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update: update `form-data` to address advisory (#34480)
 
 ### Fixed
+
 - fix: hide bridge button on testnet for unified ui (#34700)
 - fix: display multichain accounts in the right order on account list (#34756)
 - fix: stop showing all enabled networks when an additional network permission request is prompted by a dapp (#34651)
@@ -75,13 +92,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: ensures that user's email is removed from the state logs, which are downloadable from advanced settings page (#35119)
 
 ## [13.0.1]
+
 ### Fixed
+
 - fix: invalid refresh token error thrown when wallet was locked before some background requests completed (#34961)
 - fix: bridging to Solana without a Solana account failing on legacy extensions (#34943)
 - fix: polling rate being set to 1 minute instead of 10 minutes (#34883)
 
 ## [13.0.0]
+
 ### Added
+
 - feat: prefill token in unified swaps experience (#34038)
 - feat: 2.13 seedlessonboardingcontroller 2.2.0 update (#34240)
 - feat(INFRA-2772): add failure notifications for nightly build failures (#34345)
@@ -114,6 +135,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add loader for onboarding unlock (#34518)
 
 ### Changed
+
 - update: change homepage button colors and header styling (#34209)
 - update: remove unified swaps legacy and portfolio fallbacks (#34290)
 - update: change ui's background communications to use a single notification listener instead of two (#33211)
@@ -126,6 +148,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update: add Cubist to the list of supported institutional wallet (#34761)
 
 ### Fixed
+
 - fix: align asset page buttons and fix homepage scrolling (#34342)
 - fix: password form terms social and srp (#34350)
 - fix: show contacts for all chains (#34307)
@@ -230,11 +253,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: add logic to revert state for smart contract account toggle if there is a blockchain state mismatch (#34745)
 
 ## [12.23.1]
+
 ### Fixed
+
 - fix: ensure "Update extension to the latest version" button in the update prompt work in browser-action popup (#34372)
 
 ## [12.23.0]
+
 ### Added
+
 - feat: gasIncluded swaps cp-12-23.0 (#33988)
 - feat: unskipeed send flow Solana tests (#34036)
 - feat: add e2e tests for Ledger personal sign functionality (#34002)
@@ -283,6 +310,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: validate same origin domain for signIn for Solana (#33982)
 
 ### Changed
+
 - Update: the button component to be monochromatic (#33847)
 - Update: design tokens v8: font family change CentraNo1 to Geist and new background colors (#33764)
 - Update: update message when there is no DeFi positions wording (#34229)
@@ -290,6 +318,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Set confirm srp quiz word to readonly (#34225)
 
 ### Fixed
+
 - fix: solve when private key import field to always be in error state (#34050)
 - fix: regression of lanchdarkly flag key (#34045)
 - fix: solve `Error: Ledger: Unknown error while signing transaction` (#33581)
@@ -334,20 +363,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: migrate BSC network RPC from bsc-dataseed.binance.org to bsc infura (#33997)
 
 ## [12.22.3]
+
 ### Fixed
+
 - fix: resolve infinite loading on spending cap when selected chain differs from dapp (#34355)
 - fix: prevent frequent writes while the wallet UI is closed (#34413, #34465, #34506, #34473, #34474)
 
 ## [12.22.2]
+
 ### Fixed
+
 - Fix crash on older browsers (#34255)
 
 ## [12.22.1]
+
 ### Fixed
+
 - Display sent amounts from the active swap quote when showing approval warnings to prevent parsing non-numerical inputs (#34156)
 
 ## [12.22.0]
+
 ### Added
+
 - New onboarding flow (#33704 and others)
 - Added basic functionality banner in the carousel (#33095)
 - New Multichain Accounts List Menu (#33657)
@@ -384,6 +421,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use the new afterAdd hook to update the transaction when remote mode is available (#33115)
 
 ### Changed
+
 - Updated OP logo (#33399)
 - Updated connection background and fixed design nits (#33100)
 - Adapt the styles of the price chart loading and empty states (#33139)
@@ -392,6 +430,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated the NetworkController to enable Base network by default (#33448)
 
 ### Fixed
+
 - Update link to MetaMask CLA (#30940)
 - Fixed a case where non-unique words in confirm seed phrase would break the SRP quiz (#33781)
 - Display "Switch back" instead of "Switch" for smart accounts (#33724)
@@ -426,18 +465,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve useSnapAssetDisplay performance (#33138)
 
 ## [12.20.1]
+
 ### Changed
+
 - This changelog was split off with 12.22.0
 - All older changes can be found in [docs/CHANGELOG_older.md](https://github.com/MetaMask/metamask-extension/blob/main/docs/CHANGELOG_older.md)
 
-[Unreleased]: https://github.com/MetaMask/metamask-extension/compare/v13.1.0...HEAD
-[13.1.0]: https://github.com/MetaMask/metamask-extension/compare/v13.0.1...v13.1.0
-[13.0.1]: https://github.com/MetaMask/metamask-extension/compare/v13.0.0...v13.0.1
-[13.0.0]: https://github.com/MetaMask/metamask-extension/compare/v12.23.1...v13.0.0
-[12.23.1]: https://github.com/MetaMask/metamask-extension/compare/v12.23.0...v12.23.1
-[12.23.0]: https://github.com/MetaMask/metamask-extension/compare/v12.22.3...v12.23.0
-[12.22.3]: https://github.com/MetaMask/metamask-extension/compare/v12.22.2...v12.22.3
-[12.22.2]: https://github.com/MetaMask/metamask-extension/compare/v12.22.1...v12.22.2
-[12.22.1]: https://github.com/MetaMask/metamask-extension/compare/v12.22.0...v12.22.1
-[12.22.0]: https://github.com/MetaMask/metamask-extension/compare/v12.20.1...v12.22.0
-[12.20.1]: https://github.com/MetaMask/metamask-extension/releases/tag/v12.20.1
+[Unreleased]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v999.7.0...HEAD
+[999.7.0]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v13.1.0...v999.7.0
+[13.1.0]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v13.0.1...v13.1.0
+[13.0.1]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v13.0.0...v13.0.1
+[13.0.0]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.23.1...v13.0.0
+[12.23.1]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.23.0...v12.23.1
+[12.23.0]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.22.3...v12.23.0
+[12.22.3]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.22.2...v12.22.3
+[12.22.2]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.22.1...v12.22.2
+[12.22.1]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.22.0...v12.22.1
+[12.22.0]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.20.1...v12.22.0
+[12.20.1]: https://github.com/consensys-test/metamask-extension-test-workflow2/releases/tag/v12.20.1
