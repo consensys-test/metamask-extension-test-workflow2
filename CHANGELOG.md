@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Uncategorized
 
+- update changelog for 999.11.0
+- bump semvar version to 999.11.0
+- INFRA-2867: Added chore prefix to PR, await for create relesse, remove csv from changelog pr
+- An updated test
+- Test fix for workflows not taking PR 2
+- Return to old version for testing
+- INFRA-2687-Use Updated test version of github-tools
 - bump semvar version to 999.11.0
 - My test commit ([#1030](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/1030))
 - My test commit ([#30](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/30))
