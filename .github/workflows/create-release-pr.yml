@@ -16,21 +16,31 @@ on:
         description: 'Previous release version branch name, tag or commit hash (e.g., Version-vx.y.z, v7.7.0, or 76fbc500034db9779e9ff7ce637ac5be1da0493d)'
         required: true
 
-  create:
-    branches:
-      - "Version-v*.*.*"   # only triggers when branches like Version-v1.2.3 are created
+  workflow_call:
+    inputs:
+      checkout-base-branch:
+        required: true
+        type: string
+      release-pr-base-branch:
+        required: true
+        type: string
+      semver-version:
+        required: true
+        type: string
+      previous-version-ref:
+        required: true
+        type: string
 
 jobs:
   create-release-pr:
     name: Create Release Pull Request using Github Tools
-    if: github.ref_type == 'branch' && github.ref =~ '^refs/heads/Version-v[0-9]+\.[0-9]+\.[0-9]+$' || github.event_name == 'workflow_dispatch'
     uses: MetaMask/github-tools/.github/workflows/create-release-pr.yml@914cbff8a8d58cfe0053e8690a3c0d4b281e27d6
     with:
       platform: extension
-      checkout-base-branch: ${{ inputs.checkout-base-branch || 'main' }}
-      release-pr-base-branch: ${{ inputs.release-pr-base-branch || 'master' }}
-      semver-version: ${{ inputs.semver-version || github.ref_name }}
-      previous-version-ref: ${{ inputs.previous-version-ref || '' }}
+      checkout-base-branch: ${{ inputs.checkout-base-branch }}
+      release-pr-base-branch: ${{ inputs.release-pr-base-branch }}
+      semver-version: ${{ inputs.semver-version }}
+      previous-version-ref: ${{ inputs.previous-version-ref }}
       github-tools-version: 914cbff8a8d58cfe0053e8690a3c0d4b281e27d6
     secrets:
       github-token: ${{ secrets.PR_TOKEN }}
