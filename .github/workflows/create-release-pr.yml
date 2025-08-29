@@ -30,6 +30,11 @@ on:
       previous-version-ref:
         required: true
         type: string
+    secrets:
+      github-token:
+        required: true
+      google-application-creds-base64:
+        required: true
 
 jobs:
   create-release-pr:
@@ -43,8 +48,8 @@ jobs:
       previous-version-ref: ${{ inputs.previous-version-ref }}
       github-tools-version: 914cbff8a8d58cfe0053e8690a3c0d4b281e27d6
     secrets:
-      github-token: ${{ secrets.PR_TOKEN }}
-      google-application-creds-base64: ${{ secrets.GCP_RLS_SHEET_ACCOUNT_BASE64 }}
+      github-token: ${{ secrets.github-token }}
+      google-application-creds-base64: ${{ secrets.google-application-creds-base64 }}
     permissions:
       contents: write
       pull-requests: write
