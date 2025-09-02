@@ -32,9 +32,9 @@ on:
         type: string
     secrets:
       github-token:
-        required: true
+        required: false
       google-application-creds-base64:
-        required: true
+        required: false
 
 jobs:
   create-release-pr:
@@ -48,8 +48,8 @@ jobs:
       previous-version-ref: ${{ inputs.previous-version-ref }}
       github-tools-version: 914cbff8a8d58cfe0053e8690a3c0d4b281e27d6
     secrets:
-      github-token: ${{ secrets.github-token }}
-      google-application-creds-base64: ${{ secrets.google-application-creds-base64 }}
+      github-token: ${{ github.event_name == 'workflow_dispatch' && secrets.PR_TOKEN || secrets.github-token }}
+      google-application-creds-base64: ${{ github.event_name == 'workflow_dispatch' && secrets.GCP_RLS_SHEET_ACCOUNT_BASE64 || secrets.google-application-creds-base64 }}
     permissions:
       contents: write
       pull-requests: write
