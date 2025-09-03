@@ -42,9 +42,9 @@ jobs:
             local prefix="$1"
             local temp_file="$(mktemp)"
             local page=1
-            echo "Fetching branches matching $prefix* (paginated)..."
+            echo "Fetching branches matching $prefix* (paginated)..." >&2
             while :; do
-              echo "Fetching page $page for $prefix..."
+              echo "Fetching page $page for $prefix..." >&2
               resp="$(mktemp)"
               url="https://api.github.com/repos/${GITHUB_REPOSITORY}/git/matching-refs/heads/${prefix}?per_page=100&page=${page}"
               curl -sS -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" "$url" -o "$resp"
