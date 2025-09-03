@@ -39,14 +39,14 @@ on:
 jobs:
   create-release-pr:
     name: Create Release Pull Request using Github Tools
-    uses: MetaMask/github-tools/.github/workflows/create-release-pr.yml@INFRA-2849-WorkForBothBranchSyntaxes
+    uses: MetaMask/github-tools/.github/workflows/create-release-pr.yml@ddac3ee395896ff15df6fc561ff710efbb0dd3fa
     with:
       platform: extension
       checkout-base-branch: ${{ inputs.checkout-base-branch }}
       release-pr-base-branch: ${{ inputs.release-pr-base-branch }}
       semver-version: ${{ inputs.semver-version }}
       previous-version-ref: ${{ inputs.previous-version-ref }}
-      github-tools-version: INFRA-2849-WorkForBothBranchSyntaxes
+      github-tools-version: ddac3ee395896ff15df6fc561ff710efbb0dd3fa
     secrets:
       # This token needs write permissions to metamask-extension & read permissions to metamask-planning
       # If called from auto-create-release-pr use the PR_TOKEN passed in as an input, if called manually use github secret token values
