@@ -11,6 +11,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Uncategorized
 
+- update changelog for 999.30.0
+- bump semvar version to 999.30.0
+- Linting fix test
+- Branch output error fix
+- Updated branch filtering logic, and error when no lower version found
+- Update to new branch github toola for testing extension release/x.y.z branch syntax
+- Handle pagination issue found by visual studio AI
+- Code review fixes
+- Added ignore incorrect branch version number verification
+- Return create-release-pr.yml
+- Added branch filtering if not numbers in branch name
+- Undo quick testing change after successful test
+- Temporary testing PR
+- Fix github secrets reference for create-release
+- Test adding github secrets for automated build passing #2
+- INFRA-2849:Added auto create release pr workflow
+- INFRA-2849-Automate create-release-pr workflow in branch creation
+- ci: disable all workflows except create-release-pr
+- Merge origin/main into master-sync
+- Bumping version to 13.1.2
+- Merge origin/main into master-sync
+- Bumping version to 13.1.1
 - bump semvar version to 999.30.0
 - Linting fix test
 - Branch output error fix
