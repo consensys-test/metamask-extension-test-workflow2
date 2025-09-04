@@ -3,12 +3,6 @@ name: Create Release Pull Request
 on:
   workflow_dispatch:
     inputs:
-      checkout-base-branch:
-        description: 'The base branch, tag, or SHA for git operations. Usually `main`'
-        required: true
-      release-pr-base-branch:
-        description: 'The base branch, tag, or SHA for the release pull request. Usually `stable`'
-        required: true
       semver-version:
         description: 'A semantic version, eg: x.x.x'
         required: true
@@ -18,12 +12,6 @@ on:
 
   workflow_call:
     inputs:
-      checkout-base-branch:
-        required: true
-        type: string
-      release-pr-base-branch:
-        required: true
-        type: string
       semver-version:
         required: true
         type: string
@@ -46,8 +34,8 @@ jobs:
     uses: MetaMask/github-tools/.github/workflows/create-release-pr.yml@ddac3ee395896ff15df6fc561ff710efbb0dd3fa
     with:
       platform: extension
-      checkout-base-branch: ${{ inputs.checkout-base-branch }}
-      release-pr-base-branch: ${{ inputs.release-pr-base-branch }}
+      checkout-base-branch: main
+      release-pr-base-branch: stable
       semver-version: ${{ inputs.semver-version }}
       previous-version-ref: ${{ inputs.previous-version-ref }}
       github-tools-version: ddac3ee395896ff15df6fc561ff710efbb0dd3fa
