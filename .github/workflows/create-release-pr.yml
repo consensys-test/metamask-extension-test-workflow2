@@ -37,6 +37,7 @@ jobs:
         run: |
           set -euo pipefail
 
+          echo "Provided semver input: ${SEMVER}"
           # Validate semver
           if ! [[ "${SEMVER:-}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Error: semver-version must be numeric X.Y.Z, got: ${SEMVER:-<empty>}" >&2
