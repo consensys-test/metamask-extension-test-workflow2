@@ -67,7 +67,5 @@ jobs:
       github-token: ${{ secrets.PR_TOKEN }}
       google-application-creds-base64: ${{ secrets.GCP_RLS_SHEET_ACCOUNT_BASE64 }}
     with:
-      checkout-base-branch: main
-      release-pr-base-branch: stable
       semver-version: ${{ needs.extract.outputs.semver }}
 
