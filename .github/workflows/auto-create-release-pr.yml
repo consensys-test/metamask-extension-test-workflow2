@@ -129,3 +129,4 @@ jobs:
       release-pr-base-branch: stable
       semver-version: ${{ needs.extract.outputs.semver }}
       previous-version-ref: ${{ needs.extract.outputs.previous_ref }}
+
