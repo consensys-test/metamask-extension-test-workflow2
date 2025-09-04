@@ -6,16 +6,10 @@ on:
       semver-version:
         description: 'A semantic version, eg: x.x.x'
         required: true
-      previous-version-ref:
-        description: 'Previous release version branch name, tag or commit hash (e.g., Version-vx.y.z, v7.7.0, or 76fbc500034db9779e9ff7ce637ac5be1da0493d)'
-        required: true
 
   workflow_call:
     inputs:
       semver-version:
-        required: true
-        type: string
-      previous-version-ref:
         required: true
         type: string
     secrets:
@@ -60,8 +54,68 @@ jobs:
             echo "release_base=stable" >> "$GITHUB_OUTPUT"
           fi
 
-  create-release-pr:
+  resolve-previous-ref:
     needs: resolve-bases
+    runs-on: ubuntu-latest
+    outputs:
+      previous_ref: ${{ steps.out.outputs.previous_ref }}
+    steps:
+      - id: out
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SEMVER: ${{ inputs.semver-version }}
+        run: |
+          set -euo pipefail
+
+          semver="$SEMVER"
+
+          # Function to paginate and collect refs for a prefix
+          fetch_matching_refs() {
+            local prefix="$1"
+            local temp_file="$(mktemp)"
+            local page=1
+            echo "Fetching branches matching $prefix* (paginated)..." >&2
+            while :; do
+              echo "Fetching page $page for $prefix..." >&2
+              resp="$(mktemp)"
+              url="https://api.github.com/repos/${GITHUB_REPOSITORY}/git/matching-refs/heads/${prefix}?per_page=100&page=${page}"
+              curl -sS -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" "$url" -o "$resp"
+
+              cat "$resp" >> "$temp_file"
+
+              count=$(jq length "$resp")
+              if [ "$count" -lt 100 ]; then
+                break
+              fi
+              page=$((page + 1))
+            done
+            echo "$temp_file"
+          }
+
+          # Fetch for each prefix
+          version_v_file=$(fetch_matching_refs "Version-v")
+          release_file=$(fetch_matching_refs "release/")
+
+          # Combine and process: extract {name, semver} for matches, sort desc by semver
+          jq -s 'add | [ .[] | .ref | ltrimstr("refs/heads/") as $name | select($name | test("^Version-v[0-9]+\\.[0-9]+\\.[0-9]+$") or test("^release/[0-9]+\\.[0-9]+\\.[0-9]+$")) | {name: $name, semver: (if $name | test("^Version-v") then $name | ltrimstr("Version-v") else $name | ltrimstr("release/") end) } ] | sort_by( .semver | split(".") | map(tonumber) ) | reverse' "$version_v_file" "$release_file" > all_versions.json
+
+          # Filter to those with semver strictly lower than current and non-hotfix (patch==0)
+          jq --arg semver "$semver" '[ .[] | select( .semver as $v | $semver | split(".") as $c | $v | split(".") as $p | ( ($p[0] | tonumber) < ($c[0] | tonumber) or (($p[0] | tonumber) == ($c[0] | tonumber) and (($p[1] | tonumber) < ($c[1] | tonumber) or (($p[1] | tonumber) == ($c[1] | tonumber) and ($p[2] | tonumber) < ($c[2] | tonumber)))) ) and (($p[2] | tonumber) == 0) ) ]' all_versions.json > filtered_versions.json
+
+          # Select the highest lower: first in filtered list, fallback to main if none
+          if [ "$(jq length filtered_versions.json)" -eq 0 ]; then
+            previous_ref="main"
+            echo "No lower non-hotfix versions found, falling back to: ${previous_ref}"
+          else
+            highest_lower="$(jq -r '.[0].semver' filtered_versions.json)"
+            previous_ref="$(jq -r '.[0].name' filtered_versions.json)"
+            echo "Selected highest lower non-hotfix version: ${highest_lower} (branch: ${previous_ref})"
+          fi
+          echo "previous_ref=${previous_ref}" >> "$GITHUB_OUTPUT"
+
+  create-release-pr:
+    needs: [resolve-bases, resolve-previous-ref]
     name: Create Release Pull Request using Github Tools
     uses: MetaMask/github-tools/.github/workflows/create-release-pr.yml@ddac3ee395896ff15df6fc561ff710efbb0dd3fa
     with:
@@ -69,7 +123,7 @@ jobs:
       checkout-base-branch: ${{ needs.resolve-bases.outputs.checkout_base }}
       release-pr-base-branch: ${{ needs.resolve-bases.outputs.release_base }}
       semver-version: ${{ inputs.semver-version }}
-      previous-version-ref: ${{ inputs.previous-version-ref }}
+      previous-version-ref: ${{ needs.resolve-previous-ref.outputs.previous_ref }}
       github-tools-version: ddac3ee395896ff15df6fc561ff710efbb0dd3fa
     secrets:
       # This token needs write permissions to metamask-extension & read permissions to metamask-planning
