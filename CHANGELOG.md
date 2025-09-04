@@ -1,4 +1,5 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -6,8 +7,233 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [13.2.0]
+## [999.44.0]
+
+### Uncategorized
+
+- bump semvar version to 999.44.0
+- Update auto-create-release-pr.yml
+- Made branch print out output ([#90](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/90))
+- Made branch print out output
+- Removed need for hardcoded previous version ([#86](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/86))
+- Removed need for hardcoded previous version
+- INFRA-2911-Removed need to manually pass base checkout, release branches ([#85](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/85))
+- INFRA-2911-Removed need to manually pass base checkout, release branches
+- Undo last commit and try again
+- Change previous reusable branch to not be patch
+- Updated so auto-create-release-pr doesn't run on hotfix ([#75](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/75))
+- Updated so auto-create-release-pr doesn't run on hotfix
+- Updated so auto-create-release-pr doesn't run on hotfix ([#73](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/73))
+- Updated so auto-create-release-pr doesn't run on hotfix
+- ci: update flaky tests bot workflow ([#35620](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35620))
+- INFRA-2849:Added auto-create-release-pr workflow to automatically create release cp-13.3.0 ([#35589](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35589))
+- chore: bump bridge controllers ([#35596](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35596))
+- chore(master): remove master references ([#35615](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35615))
+- test: fix Upload Artifacts step if the spec has a long name ([#35612](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35612))
+- test: Migration spec Request queuing revoke permission ([#35429](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35429))
+- chore: bump SonarCloud action version ([#35608](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35608))
+- chore: migrate swap to bridge api toptokens ([#35378](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35378))
+- test: fix flaky test `Preinstalled example Snap displays the Snap settings page` ([#35603](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35603))
+- chore(master): rename master branch into stable cp-13.3.0 ([#35576](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35576))
+- refactor(5557): migrate onboarding/ to react-router-v5-compat ([#35005](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35005))
+- chore: Bump ENS Snap ([#35430](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35430))
+- refactor(5561): migrate network manager component to React Router v6 compatibility ([#35039](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35039))
+- refactor: Typescript conversion of request-accounts.js ([#23910](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/23910))
+- feat(INFRA-2847): release candidate generation from release branch ([#35549](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35549))
+- chore: remove solana code fences ([#35566](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35566))
+- test: Migrate ppom e2e tests to Page object modal (part 2) ([#35580](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35580))
+- test: split Solana WebSocket Mock setup logic from Websocket Mocks ([#35552](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35552))
+- refactor: use `@metamask/eth-qr-keyring` ([#33893](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/33893))
+- chore: add selector to get account groups by addresses ([#35547](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35547))
+- chore: cp-13.3.0 update solana to 2.3.4 ([#35563](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35563))
+- feat(assets): bump assets-controllers ([#35540](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35540))
+- release: Master sync v13.2.0 into main ([#35548](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35548))
+- fix(action): remove useless condition ([#35525](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35525))
+- test: use manifestFlag to disable over-ride of smartTx migration ([#34958](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/34958))
+- test: Migrate ppom e2e tests to Page object modal (part 1) ([#35486](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35486))
+- Merge origin/main into master-sync
+- chore: Update Ocap kernel packages and patch @endo/env-options ([#35526](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35526))
+- release: 13.2.0 ([#35198](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35198))
+- release(runway): cherry-pick fix: grant permission via connected site popover ([#35530](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35530))
+- chore: chore/13.2.0-Changelog ([#35522](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35522))
+- feat(pr template): make changelog entry mandatory ([#35339](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35339))
+- release(runway): cherry-pick fix: cp-13.2.0 Make SnapsNameProvider respect the chainIds caveat ([#35509](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35509))
+- release(runway): cherry-pick fix: Launchdarkly flag added carousel-banners ([#35485](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35485))
+- chore: Bump main version to 13.4.0 ([#35504](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35504))
+- release(runway): cherry-pick fix: skip automatic gas updates for swap and bridge transactions cp-13.2.0 ([#35489](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35489))
+- refactor: display account group number in connection list item ([#35427](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35427))
+- refactor: remove useModalNavigation to simplify ([#35434](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35434))
+- chore: Disable React & Redux Devtools by default ([#35438](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35438))
+- chore: adding getInternalAccountsFromGroupById selector ([#35381](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35381))
+- chore: updating MultichainAddressRowList ([#35380](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35380))
+- test: add Solana WebSocket specs to validate correct start and termination of connection ([#35425](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35425))
+- INFRA-2867: Skip version bump PR creation if already exists, commit in main ([#35480](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35480))
+- chore: remove page load benchmark raw data from json output ([#35482](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35482))
+- fix(INFRA-2864): add permissions to rca needed label removal workflow ([#35476](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35476))
+- test: remove unnecessary step for waiting x number of windows when not needed ([#35388](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35388))
+- ci: automated page load benchmark ([#34894](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/34894))
+- feat(INFRA-2864): rca needed label removal ([#35371](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35371))
+- release(runway): cherry-pick fix: cp-13.2.0 Show error when background is unresponsive ([#35462](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35462))
+- release(runway): cherry-pick fix: cp-13.2.0 show active dapp network ([#35437](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35437))
+- chore: adding storybook story for asset list control bar component ([#35276](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35276))
+- chore: AddWalletModal component initial UI ([#35292](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35292))
+- INFRA-2867: Added chore prefix to PR, await for create release, remove commits.csv from changelog pr, add workflow artifact ([#35435](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35435))
+- chore: chore/13.2.0-Changelog ([#35301](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35301))
+- bump: bitcoin v1 ([#35404](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35404))
+- chore: migrate swap experience to BIP-44 selectors ([#35220](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35220))
+- release(runway): cherry-pick fix: network manager GNS removal update ([#35406](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35406))
+- refactor(5558): migrate notification system to react-router-v5-compat ([#35009](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35009))
+- Sync v13.2.0 with master ([#35420](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35420))
+- release: Master sync v13.1.2 into main ([#35419](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35419))
+- Merge remote-tracking branch 'origin/master' into sync-v13.2.0-with-master
+- Merge origin/main into master-sync
+- ci(next semver version): revert calculation method to no longer rely on package.json ([#35248](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35248))
+- INFRA-2867: Update inputs for workflow, update input parameter ([#35399](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35399))
+- release: 13.1.2 ([#35365](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35365))
+- refactor: Migrate AvatarAccount ([#35285](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35285))
+- chore: chore/13.1.2-Changelog ([#35400](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35400))
+- chore: replace deprecated button components ([#34098](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/34098))
+- release(runway): cherry-pick fix: solana websocket lifecycle ([#35394](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35394))
+- chore: bump {`ens`,`gas-fee`,`notification-services`}-controller to {`^17`,`^24`,`^16`} ([#35360](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35360))
+- release(runway): cherry-pick chore: cp-13.2.0 deeplink - auto selects non-evm account ([#35397](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35397))
+- refactor: Typescript conversion of watch-asset.js ([#23776](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/23776))
+- refactor: Typescript conversion of send-metadata.js ([#23738](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/23738))
+- chore: cp-13.2.0 deeplink - auto selects non-evm account ([#35390](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35390))
+- chore(deps): bump @metamask/message-signing-snap to v1.1.3 ([#34364](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/34364))
+- release(runway): cherry-pick fix: close solana websockets on inactive ([#35375](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35375))
+- chore: bump assets controllers to v73.3.0 ([#35283](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35283))
+- chore: Improve metrics for failed network requests ([#34605](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/34605))
+- chore: chore/13.1.2-Changelog ([#35368](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35368))
+- Sync v13.2.0 with master ([#35358](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35358))
+- Bump version to 13.1.2 ([#35362](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35362))
+- chore: Bump Snaps packages ([#35356](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35356))
+- Bumping version to 13.1.2
+- fix(unit test): update snapshot from multichain bridge quote card
+- release: Master sync v13.1.1 into main ([#35357](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35357))
+- Merge remote-tracking branch 'origin/master' into sync-v13.2.0-with-master
+- Merge origin/main into master-sync
+- release: 13.1.1 ([#35226](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35226))
+- chore: chore/13.1.1-Changelog ([#35351](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35351))
+- release(runway): cherry-pick fix: fix ui not loading in old browsers due to use `Promise.withResolvers` cp-13.2.0 ([#35340](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35340))
+- chore: removing portfolio url from privacy snapshot ([#35338](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35338))
+- chore: remove dead code - currency formatting ([#35317](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35317))
+- chore: update portfolio.metamask.io urls to app.metamask.io ([#35221](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35221))
+- refactor: Migrate AvatarAccount ([#35284](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35284))
+- ci: fix PRs from external contributors ([#35320](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35320))
+- release(runway): cherry-pick feat(INFRA-2845): restrict release pr merges cp-13.2.0 ([#35324](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35324))
+- release(runway): cherry-pick fix: Add missing build secret to Firefox bundle script ([#35304](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35304))
+- bump: bitcoin v0.19.3 ([#35275](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35275))
+- release(runway): cherry-pick fix: audit failures `cipher-base` and `sha.js` cp-13.2.0 ([#35323](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35323))
+- release(runway): cherry-pick fix: hide fee info if swap quote does not include a MetaMask fee ([#35318](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35318))
+- feat(INFRA-2845): restrict release pr merges cp-13.2.0 ([#35116](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35116))
+- refactor: migrate AvatarAccount ([#35288](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35288))
+- release(runway): cherry-pick feat: adds the nonevm deeplink ([#35303](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35303))
+- test: Migration spec Edit gas fee ([#35054](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35054))
+- test: add sei network to network-connection.spec ([#34886](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/34886))
+- chore: adding dom purify patch back ([#35281](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35281))
+- chore: remove unused storybook addons ([#35004](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35004))
+- chore: upgrade @metamask/design-system-react@0.3.1 ([#35271](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35271))
+- chore: chore/13.1.1-Changelog ([#35227](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35227))
+- refactor: create PreferredAvatar ([#35186](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35186))
+- chore: rm deprecated CrossChainSwaps events ([#35127](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35127))
+- chore: New Crowdin translations by Github Action ([#34367](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/34367))
+- cherry-pick(13.1.1): chore: removes the Solana modal from the initial flow (#34988) ([#34988](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/34988))
+- Bumping version to 13.1.1
+- chore: Swap token balance and metrics fixes cp-13.2.0 ([#35215](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35215))
+- release(runway): cherry-pick feat: removed `socialLogin` email from state logs exports cp-13.2.0 ([#35180](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35180))
+- chore: chore/13.2.0-Changelog ([#35199](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35199))
+- Sync v13.2.0 with master ([#35200](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35200))
+- Update Attributions
+- fix(quote card test file): remove duplicate slippage
+- Update Attributions
+- Merge remote-tracking branch 'origin/master' into sync-v13.2.0-with-master
+
 ### Added
+
+- feat: Integrate ShieldController ([#35421](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35421))
+- feat: add perp push translations ([#35621](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35621))
+- feat: trigger alignWallets when basicFunctionality ON ([#35190](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35190))
+- feat: add Trezor e2e tests for legacy and EIP1559 transactions ([#35524](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35524))
+- feat: Remove network is busy alert ([#34827](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/34827))
+- feat: Add feature flag for gator permissions page ([#35307](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35307))
+- feat: Add entry points for Add Wallet modal from account list page ([#35536](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35536))
+- feat: shield settings UI ([#35352](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35352))
+- feat: Ledger forget device e2e tests ([#35463](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35463))
+- feat: add e2e tests for trezor ERC721 NFT deployment and management. ([#35383](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35383))
+- feat: Add SRP backup to Multichain Account Details ([#35518](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35518))
+- feat: Add initial multichain add wallet page for private key import ([#35543](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35543))
+- feat: shield entry modal ([#35347](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35347))
+- feat: add new multichain account version for sitecell ([#35302](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35302))
+- feat: useAccountGroupForPermissions 2 ([#35402](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35402))
+- feat: adding MultichainAccountAddressListPage routes and entry points ([#35490](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35490))
+- feat: Adding designs for amount input ([#35510](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35510))
+- feat: bump solana snap ([#35511](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35511))
+- feat: adding utility method for routing to send page ([#35505](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35505))
+- feat: capture amount metrics events ([#35503](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35503))
+- feat: Add max button to amount page ([#35474](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35474))
+- feat: Implementing send metrics context and hooks ([#35461](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35461))
+- feat: add MultichainAccountAddressListPage component ([#35191](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35191))
+- feat: multichain accounts edit accounts page ([#35297](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35297))
+- feat: update SeedlessOnboarding controller to v3 ([#35413](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35413))
+- feat: send page implement navigations ([#35416](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35416))
+- feat: Implement the trezor e2e forget device happy path. ([#35460](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35460))
+- feat: MetaMask Shield: Integrate Security Gateway ([#35407](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35407))
+- feat: add Trezor personal sign e2e test ([#35408](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35408))
+- feat: swaps-2834 adds bitcoin multichain bridge chain ([#35377](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35377))
+- feat: Add multichain wallet details page ([#35182](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35182))
+- feat: add end-to-end tests for Trezor ERC20 token creation and management ([#35382](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35382))
+- feat: deprecating carousel slides ([#35109](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35109))
+- feat: Submit solana send to solana snap for review ([#35361](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35361))
+- feat: Adding amount fiat conversion and validation functions ([#35346](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35346))
+- feat: Add security alerts config option ([#35396](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35396))
+- feat: add flag to enable metamask shield feature ([#35321](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35321))
+- feat: Adding header component on send page ([#35326](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35326))
+- feat: Display balance on amount page ([#35246](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35246))
+- feat: Add multichain account details page ([#35298](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35298))
+- feat: Action to handle submit for EVM send ([#35188](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35188))
+- feat: pass asset over to send page in url parameters ([#35115](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35115))
+- feat: Add send context and page navigation ([#35106](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35106))
+- feat: cp-13.2.0 adds the nonevm deeplink ([#35228](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35228))
+- feat: Improve dapp connection UX when the wallet is locked ([#35122](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35122))
+
+### Fixed
+
+- fix: Destructure `openExtensionInBrowser` from `global` in `Routes` component ([#35587](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35587))
+- fix: do not change the GNS on wallet_add/switchEthereumChain when the dapp has permissions ([#35559](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35559))
+- fix: remove non-existent round prop from IconButton ([#35537](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35537))
+- fix: cp-13.2.0 grant permission via connected site popover ([#35487](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35487))
+- fix: multichain account name in the account picker ([#35478](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35478))
+- fix: plan 966 enhance ledger not supported error ([#35291](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35291))
+- fix: cp-13.2.0 Make SnapsNameProvider respect the chainIds caveat ([#35477](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35477))
+- fix: skip `multipleApprovalsAlerts` when simulations is not supported ([#34858](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/34858))
+- fix: skip automatic gas updates for swap and bridge transactions cp-13.2.0 ([#35455](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35455))
+- fix: cp-13.2.0 Launchdarkly flag added carousel-banners ([#35447](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35447))
+- fix: wallet lock race-condition ([#35022](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35022))
+- fix: stable sync secret ([#35464](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35464))
+- fix: cp-13.2.0 Show error when background is unresponsive ([#35332](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35332))
+- fix: cp-13.2.0 show active dapp network ([#35432](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35432))
+- fix: insufficient number of locale subs in account-exists/not-found pages ([#35414](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35414))
+- fix: cp-13.2.0 network manager GNS removal update ([#35264](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35264))
+- fix: cp-13.1.2 solana websocket lifecycle ([#35392](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35392))
+- fix: Account name overflow ([#35343](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35343))
+- fix: cp-13.1.2 close solana websockets on inactive ([#35359](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35359))
+- fix: Clear button does not clear all textboxes with 24 words ([#33364](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/33364))
+- fix: update `getInternalAccountByGroupAndCaip` and `getInternalAccountBySelectedAccountGroupAndCaip` selectors ([#35319](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35319))
+- fix: transactions from multiple different networks not correctly displayed in activity tab ([#35231](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35231))
+- fix: Fixing issue in permit signature metrics ([#35203](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35203))
+- fix: audit failures `cipher-base` and `sha.js` (#35309) cp ([#35309](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35309))
+- fix: hide fee info if swap quote does not include a MetaMask fee cp-13.1.1 ([#35278](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35278))
+- fix: audit failures `cipher-base` and `sha.js` ([#35309](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35309))
+- fix: Add missing build secret to Firefox bundle script ([#35280](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35280))
+- fix: Remove use of networkClientId for global network to get next nonce. ([#35204](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35204))
+- fix: design system react library, lavamoat policy and webpack alias for @radix-ui/react-slot ([#35212](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35212))
+- fix: i10n fixes ([#35244](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35244))
+- fix: icon button background color ([#35211](https://github.com/consensys-test/metamask-extension-test-workflow2/pull/35211))
+
+## [13.2.0]
+
+### Added
+
 - feat: enable Linea for Smart Transactions (#35117)
 - feat: add discover button for Solana network in the network list (#34498)
 - feat: add account switching functionality for the multichain accounts (#34989)
@@ -23,6 +249,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: update network selector to manage selecting a single network or all popular networks (#35264)
 
 ### Changed
+
 - update: remove the Solana modal from the initial flow (#34988)
 - update: disable transaction resubmission (#35028)
 - update: update `SEI` network's name from `Sei Network` to `Sei Mainnet` (#34930)
@@ -30,6 +257,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update: removed the `socialLoginEmail` from the state-logs export (settings -> advanced -> download state-logs), instead of masking the value (#35170)
 
 ### Fixed
+
 - fix: ensure text doesn't go beyond component boundaries when user is prompted to add a network (#34824)
 - fix: skip metametrics screen if user already chose an option (#35036)
 - fix: disable the hover state when SnapUISelector is disabled (#34964)
@@ -51,17 +279,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: ensure the dapp-connected network remains unchanged when the global network RPC endpoint is switched (#35487)
 
 ## [13.1.2]
+
 ### Fixed
+
 - fix: fixes a performance issue by closing all Solana WebSocket connections whenever the client becomes inactive (#35359)
 - fix: fixes a performance issue by only opening Solana WebSocket connections if client is active (#35392)
 
 ## [13.1.1]
+
 ### Fixed
+
 - fix: remove the Solana new feature modal from the onboarding flow (#34988)
 - fix: hide swap fee info line if quote does not include a MetaMask fee (#35278)
 
 ## [13.1.0]
+
 ### Added
+
 - feat: inform users using social login when their password got updated in another instance of the wallet (#34757)
 - feat: use websockets instead of polling to automatically update Solana transactions and token balances (#34620)
 - feat: enable notifications by default for users (#34693)
@@ -70,6 +304,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: Add buttons to test error capture (#34386)
 
 ### Changed
+
 - update: more seamless and user-friendly experience for users interacting with Trezor devices (#33834)
 - update: adopt fixed spacing between the account avatar and its details rows (#34689)
 - update: polish welcome page copywriting and styles (#34621)
@@ -91,6 +326,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update: update `form-data` to address advisory (#34480)
 
 ### Fixed
+
 - fix: hide bridge button on testnet for unified ui (#34700)
 - fix: display multichain accounts in the right order on account list (#34756)
 - fix: stop showing all enabled networks when an additional network permission request is prompted by a dapp (#34651)
@@ -129,13 +365,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: ensures that user's email is removed from the state logs, which are downloadable from advanced settings page (#35119)
 
 ## [13.0.1]
+
 ### Fixed
+
 - fix: invalid refresh token error thrown when wallet was locked before some background requests completed (#34961)
 - fix: bridging to Solana without a Solana account failing on legacy extensions (#34943)
 - fix: polling rate being set to 1 minute instead of 10 minutes (#34883)
 
 ## [13.0.0]
+
 ### Added
+
 - feat: prefill token in unified swaps experience (#34038)
 - feat: 2.13 seedlessonboardingcontroller 2.2.0 update (#34240)
 - feat(INFRA-2772): add failure notifications for nightly build failures (#34345)
@@ -168,6 +408,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add loader for onboarding unlock (#34518)
 
 ### Changed
+
 - update: change homepage button colors and header styling (#34209)
 - update: remove unified swaps legacy and portfolio fallbacks (#34290)
 - update: change ui's background communications to use a single notification listener instead of two (#33211)
@@ -180,6 +421,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update: add Cubist to the list of supported institutional wallet (#34761)
 
 ### Fixed
+
 - fix: align asset page buttons and fix homepage scrolling (#34342)
 - fix: password form terms social and srp (#34350)
 - fix: show contacts for all chains (#34307)
@@ -284,11 +526,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: add logic to revert state for smart contract account toggle if there is a blockchain state mismatch (#34745)
 
 ## [12.23.1]
+
 ### Fixed
+
 - fix: ensure "Update extension to the latest version" button in the update prompt work in browser-action popup (#34372)
 
 ## [12.23.0]
+
 ### Added
+
 - feat: gasIncluded swaps cp-12-23.0 (#33988)
 - feat: unskipeed send flow Solana tests (#34036)
 - feat: add e2e tests for Ledger personal sign functionality (#34002)
@@ -337,6 +583,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: validate same origin domain for signIn for Solana (#33982)
 
 ### Changed
+
 - Update: the button component to be monochromatic (#33847)
 - Update: design tokens v8: font family change CentraNo1 to Geist and new background colors (#33764)
 - Update: update message when there is no DeFi positions wording (#34229)
@@ -344,6 +591,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Set confirm srp quiz word to readonly (#34225)
 
 ### Fixed
+
 - fix: solve when private key import field to always be in error state (#34050)
 - fix: regression of lanchdarkly flag key (#34045)
 - fix: solve `Error: Ledger: Unknown error while signing transaction` (#33581)
@@ -388,20 +636,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: migrate BSC network RPC from bsc-dataseed.binance.org to bsc infura (#33997)
 
 ## [12.22.3]
+
 ### Fixed
+
 - fix: resolve infinite loading on spending cap when selected chain differs from dapp (#34355)
 - fix: prevent frequent writes while the wallet UI is closed (#34413, #34465, #34506, #34473, #34474)
 
 ## [12.22.2]
+
 ### Fixed
+
 - Fix crash on older browsers (#34255)
 
 ## [12.22.1]
+
 ### Fixed
+
 - Display sent amounts from the active swap quote when showing approval warnings to prevent parsing non-numerical inputs (#34156)
 
 ## [12.22.0]
+
 ### Added
+
 - New onboarding flow (#33704 and others)
 - Added basic functionality banner in the carousel (#33095)
 - New Multichain Accounts List Menu (#33657)
@@ -438,6 +694,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use the new afterAdd hook to update the transaction when remote mode is available (#33115)
 
 ### Changed
+
 - Updated OP logo (#33399)
 - Updated connection background and fixed design nits (#33100)
 - Adapt the styles of the price chart loading and empty states (#33139)
@@ -446,6 +703,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated the NetworkController to enable Base network by default (#33448)
 
 ### Fixed
+
 - Update link to MetaMask CLA (#30940)
 - Fixed a case where non-unique words in confirm seed phrase would break the SRP quiz (#33781)
 - Display "Switch back" instead of "Switch" for smart accounts (#33724)
@@ -480,21 +738,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve useSnapAssetDisplay performance (#33138)
 
 ## [12.20.1]
+
 ### Changed
+
 - This changelog was split off with 12.22.0
 - All older changes can be found in [docs/CHANGELOG_older.md](https://github.com/MetaMask/metamask-extension/blob/main/docs/CHANGELOG_older.md)
 
-[Unreleased]: https://github.com/MetaMask/metamask-extension/compare/v13.2.0...HEAD
-[13.2.0]: https://github.com/MetaMask/metamask-extension/compare/v13.1.2...v13.2.0
-[13.1.2]: https://github.com/MetaMask/metamask-extension/compare/v13.1.1...v13.1.2
-[13.1.1]: https://github.com/MetaMask/metamask-extension/compare/v13.1.0...v13.1.1
-[13.1.0]: https://github.com/MetaMask/metamask-extension/compare/v13.0.1...v13.1.0
-[13.0.1]: https://github.com/MetaMask/metamask-extension/compare/v13.0.0...v13.0.1
-[13.0.0]: https://github.com/MetaMask/metamask-extension/compare/v12.23.1...v13.0.0
-[12.23.1]: https://github.com/MetaMask/metamask-extension/compare/v12.23.0...v12.23.1
-[12.23.0]: https://github.com/MetaMask/metamask-extension/compare/v12.22.3...v12.23.0
-[12.22.3]: https://github.com/MetaMask/metamask-extension/compare/v12.22.2...v12.22.3
-[12.22.2]: https://github.com/MetaMask/metamask-extension/compare/v12.22.1...v12.22.2
-[12.22.1]: https://github.com/MetaMask/metamask-extension/compare/v12.22.0...v12.22.1
-[12.22.0]: https://github.com/MetaMask/metamask-extension/compare/v12.20.1...v12.22.0
-[12.20.1]: https://github.com/MetaMask/metamask-extension/releases/tag/v12.20.1
+[Unreleased]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v999.44.0...HEAD
+[999.44.0]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v13.2.0...v999.44.0
+[13.2.0]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v13.1.2...v13.2.0
+[13.1.2]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v13.1.1...v13.1.2
+[13.1.1]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v13.1.0...v13.1.1
+[13.1.0]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v13.0.1...v13.1.0
+[13.0.1]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v13.0.0...v13.0.1
+[13.0.0]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.23.1...v13.0.0
+[12.23.1]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.23.0...v12.23.1
+[12.23.0]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.22.3...v12.23.0
+[12.22.3]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.22.2...v12.22.3
+[12.22.2]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.22.1...v12.22.2
+[12.22.1]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.22.0...v12.22.1
+[12.22.0]: https://github.com/consensys-test/metamask-extension-test-workflow2/compare/v12.20.1...v12.22.0
+[12.20.1]: https://github.com/consensys-test/metamask-extension-test-workflow2/releases/tag/v12.20.1
