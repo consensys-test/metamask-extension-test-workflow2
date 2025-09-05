@@ -11,6 +11,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Uncategorized
 
+- update changelog for 999.48.1 (hotfix - no test plan)
+- bump semvar version to 999.48.1
+- INFRA-2911:Allow Null previous_version_ref for hotfix
+- Set previous version ref to null for hotfix
+- Set execute permission on extract-semver.sh
+- Set execute permission on resolve-previous-ref.sh
+- fix token error, permissions
+- Make scripts executable for GitHub Actions
+- Moved logic to scripts, null previous ref for hotfix, cleaned duplicate log
+- Update auto-create-release-pr.yml
+- Made branch print out output
+- Removed need for hardcoded previous version
+- INFRA-2911-Removed need to manually pass base checkout, release branches
+- Undo last commit and try again
+- Change previous reusable branch to not be patch
+- Updated so auto-create-release-pr doesn't run on hotfix
+- Updated so auto-create-release-pr doesn't run on hotfix
+- Merge origin/main into master-sync
+- Merge remote-tracking branch 'origin/master' into sync-v13.2.0-with-master
+- Merge origin/main into master-sync
+- Bumping version to 13.1.2
+- fix(unit test): update snapshot from multichain bridge quote card
+- Merge remote-tracking branch 'origin/master' into sync-v13.2.0-with-master
+- Merge origin/main into master-sync
+- Bumping version to 13.1.1
+- Update Attributions
+- fix(quote card test file): remove duplicate slippage
+- Update Attributions
+- Merge remote-tracking branch 'origin/master' into sync-v13.2.0-with-master
 - bump semvar version to 999.48.1
 - INFRA-2911:Allow Null previous_version_ref for hotfix
 - Set previous version ref to null for hotfix
