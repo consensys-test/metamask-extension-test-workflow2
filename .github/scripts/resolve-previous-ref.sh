@@ -4,6 +4,14 @@ set -euo pipefail
 
 semver="$SEMVER"
 
+patch="${semver##*.}"
+if [ "$patch" -gt 0 ]; then
+  previous_ref=""
+  echo "Hotfix detected (patch=$patch > 0): setting previous-version-ref to null (empty)."
+  echo "previous_ref=${previous_ref}" >> "$GITHUB_OUTPUT"
+  exit 0
+fi
+
 # Function to paginate and collect refs for a prefix
 fetch_matching_refs() {
   local prefix="$1"
