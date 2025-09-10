@@ -460,7 +460,7 @@
     "@lavamoat/lavapack": "^7.0.5",
     "@lydell/node-pty": "^1.1.0",
     "@metamask/api-specs": "^0.13.0",
-    "@metamask/auto-changelog": "^2.1.0",
+    "@metamask/auto-changelog": "github:MetaMask/auto-changelog#parse-changelog-entry-adjustments",
     "@metamask/build-utils": "^3.0.0",
     "@metamask/eslint-config": "^9.0.0",
     "@metamask/eslint-config-jest": "^9.0.0",
