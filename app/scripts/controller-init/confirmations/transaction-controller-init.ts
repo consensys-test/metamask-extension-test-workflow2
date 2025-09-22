@@ -1,6 +1,7 @@
 import {
   type PublishBatchHookRequest,
   type PublishBatchHookTransaction,
+  SavedGasFees,
   TransactionController,
   TransactionControllerMessenger,
   TransactionMeta,
@@ -36,6 +37,7 @@ import { TransactionControllerInitMessenger } from '../messengers/transaction-co
 import { ControllerFlatState } from '../controller-list';
 import { TransactionMetricsRequest } from '../../../../shared/types/metametrics';
 import { EnforceSimulationHook } from '../../lib/transaction/hooks/enforce-simulation-hook';
+import { getShieldGatewayConfig } from '../../../../shared/modules/shield';
 
 export const TransactionControllerInit: ControllerInitFunction<
   TransactionController,
@@ -46,7 +48,6 @@ export const TransactionControllerInit: ControllerInitFunction<
     controllerMessenger,
     initMessenger,
     getFlatState,
-    getGlobalChainId,
     getPermittedAccounts,
     getTransactionMetricsRequest,
     updateAccountBalanceForTransactionNetwork,
@@ -77,10 +78,15 @@ export const TransactionControllerInit: ControllerInitFunction<
     getNetworkState: () => networkController().state,
     // @ts-expect-error Controller type does not support undefined return value
     getPermittedAccounts,
-    // @ts-expect-error Preferences controller uses Record rather than specific type
-    getSavedGasFees: () => {
-      const globalChainId = getGlobalChainId();
-      return preferencesController().state.advancedGasFee[globalChainId];
+    getSavedGasFees: (chainId) => {
+      return preferencesController().state.advancedGasFee[
+        chainId
+      ] as unknown as SavedGasFees | undefined;
+    },
+    getSimulationConfig: async (url) => {
+      const getToken = () =>
+        initMessenger.call('AuthenticationController:getBearerToken');
+      return getShieldGatewayConfig(getToken, url);
     },
     incomingTransactions: {
       client: `extension-${process.env.METAMASK_VERSION?.replace(/\./gu, '-')}`,
