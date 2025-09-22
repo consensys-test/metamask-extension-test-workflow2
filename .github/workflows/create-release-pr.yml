@@ -74,7 +74,7 @@ jobs:
   create-release-pr:
     needs: [resolve-bases, resolve-previous-ref]
     name: Create Release Pull Request using Github Tools
-    uses: MetaMask/github-tools/.github/workflows/create-release-pr.yml@ad37b6e201c984dffb105dfac08bafe70e4ffbb4
+    uses: MetaMask/github-tools/.github/workflows/create-release-pr.yml@INFRA-2848-AutomatedChangelogTesting
     with:
       platform: extension
       checkout-base-branch: ${{ needs.resolve-bases.outputs.checkout_base }}
