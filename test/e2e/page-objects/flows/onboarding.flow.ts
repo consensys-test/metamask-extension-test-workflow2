@@ -47,8 +47,6 @@ const goToOnboardingWelcomeLoginPage = async ({
   }
 
   const startOnboardingPage = new StartOnboardingPage(driver);
-  await startOnboardingPage.checkBannerPageIsLoaded();
-  await startOnboardingPage.agreeToTermsOfUse();
   await startOnboardingPage.checkLoginPageIsLoaded();
 
   return startOnboardingPage;
@@ -96,12 +94,15 @@ export const createNewWalletWithSocialLoginOnboardingFlow = async ({
 
   await onboardingPasswordPage.createWalletPassword(password);
 
-  if (process.env.SELENIUM_BROWSER !== Browser.FIREFOX) {
-    await onboardingMetricsFlow(driver, {
-      participateInMetaMetrics: true,
-      dataCollectionForMarketing: true,
-    });
-  }
+  // give a short delay to ensure that account synchronization is completed
+  await driver.delay(500);
+
+  // if (process.env.SELENIUM_BROWSER !== Browser.FIREFOX) {
+  //   await onboardingMetricsFlow(driver, {
+  //     participateInMetaMetrics: true,
+  //     dataCollectionForMarketing: true,
+  //   });
+  // }
 };
 
 /**
@@ -146,12 +147,12 @@ export const importWalletWithSocialLoginOnboardingFlow = async ({
   await loginPage.checkPageIsLoaded();
   await loginPage.loginToHomepage(password);
 
-  if (process.env.SELENIUM_BROWSER !== Browser.FIREFOX) {
-    await onboardingMetricsFlow(driver, {
-      participateInMetaMetrics: true,
-      dataCollectionForMarketing: true,
-    });
-  }
+  // if (process.env.SELENIUM_BROWSER !== Browser.FIREFOX) {
+  //   await onboardingMetricsFlow(driver, {
+  //     participateInMetaMetrics: true,
+  //     dataCollectionForMarketing: true,
+  //   });
+  // }
 };
 
 /**
@@ -270,6 +271,7 @@ export async function onboardingMetricsFlow(
   await onboardingMetricsPage.checkPageIsLoaded();
   if (dataCollectionForMarketing) {
     await onboardingMetricsPage.clickDataCollectionForMarketingCheckbox();
+    await onboardingMetricsPage.validateDataCollectionForMarketingIsChecked();
   }
   if (participateInMetaMetrics) {
     await onboardingMetricsPage.clickIAgreeButton();
