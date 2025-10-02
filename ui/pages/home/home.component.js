@@ -56,7 +56,7 @@ import {
   AWAITING_SWAP_ROUTE,
   PREPARE_SWAP_ROUTE,
   CROSS_CHAIN_SWAP_ROUTE,
-  ONBOARDING_SECURE_YOUR_WALLET_ROUTE,
+  ONBOARDING_REVIEW_SRP_ROUTE,
 } from '../../helpers/constants/routes';
 import ZENDESK_URLS from '../../helpers/constants/zendesk-url';
 import { METAMETRICS_SETTINGS_LINK } from '../../helpers/constants/common';
@@ -70,6 +70,7 @@ import { setEditedNetwork } from '../../store/actions';
 import { navigateToConfirmation } from '../confirmations/hooks/useConfirmationNavigation';
 import PasswordOutdatedModal from '../../components/app/password-outdated-modal';
 import ConnectionsRemovedModal from '../../components/app/connections-removed-modal';
+import ShieldEntryModal from '../../components/app/shield-entry-modal';
 ///: BEGIN:ONLY_INCLUDE_IF(build-beta)
 import BetaHomeFooter from './beta/beta-home-footer.component';
 ///: END:ONLY_INCLUDE_IF
@@ -169,6 +170,9 @@ export default class Home extends PureComponent {
     isSeedlessPasswordOutdated: PropTypes.bool,
     isPrimarySeedPhraseBackedUp: PropTypes.bool,
     showConnectionsRemovedModal: PropTypes.bool,
+    showShieldEntryModal: PropTypes.bool,
+    isSocialLoginFlow: PropTypes.bool,
+    lookupSelectedNetworks: PropTypes.func.isRequired,
   };
 
   state = {
@@ -268,6 +272,9 @@ export default class Home extends PureComponent {
 
     // Check for redirect after default page
     this.checkRedirectAfterDefaultPage();
+
+    // Ensure we have up-to-date connectivity statuses for all enabled networks
+    this.props.lookupSelectedNetworks();
   }
 
   static getDerivedStateFromProps(props) {
@@ -614,7 +621,7 @@ export default class Home extends PureComponent {
           descriptionText={t('backupApprovalNotice')}
           acceptText={t('backupNow')}
           onAccept={() => {
-            const backUpSRPRoute = `${ONBOARDING_SECURE_YOUR_WALLET_ROUTE}/?isFromReminder=true`;
+            const backUpSRPRoute = `${ONBOARDING_REVIEW_SRP_ROUTE}/?isFromReminder=true`;
             if (isPopup) {
               global.platform.openExtensionInBrowser(backUpSRPRoute);
             } else {
@@ -825,6 +832,8 @@ export default class Home extends PureComponent {
       isSeedlessPasswordOutdated,
       isPrimarySeedPhraseBackedUp,
       showConnectionsRemovedModal,
+      showShieldEntryModal,
+      isSocialLoginFlow,
     } = this.props;
 
     if (forgottenPassword) {
@@ -858,7 +867,10 @@ export default class Home extends PureComponent {
       !showMultiRpcEditModal;
 
     const showTermsOfUse =
-      completedOnboarding && !onboardedInThisUISession && showTermsOfUsePopup;
+      completedOnboarding &&
+      !onboardedInThisUISession &&
+      showTermsOfUsePopup &&
+      !isSocialLoginFlow;
 
     return (
       <div className="main-container main-container--has-shadow">
@@ -888,6 +900,16 @@ export default class Home extends PureComponent {
             <TermsOfUsePopup onAccept={this.onAcceptTermsOfUse} />
           ) : null}
           {showConnectionsRemovedModal && <ConnectionsRemovedModal />}
+          {showShieldEntryModal && (
+            <ShieldEntryModal
+              onClose={() => {
+                // TODO: implement
+              }}
+              onGetStarted={() => {
+                // TODO: implement
+              }}
+            />
+          )}
           {isPopup && !connectedStatusPopoverHasBeenShown
             ? this.renderPopover()
             : null}

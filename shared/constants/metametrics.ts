@@ -739,6 +739,8 @@ export enum MetaMetricsEventName {
   NavConnectedSitesOpened = 'Connected Sites Opened',
   NavMainMenuOpened = 'Main Menu Opened',
   NavPermissionsOpened = 'Permissions Opened',
+  NetworkConnectionBannerShown = 'Network Connection Banner Shown',
+  NetworkConnectionBannerUpdateRpcClicked = 'Network Connection Banner Update RPC Clicked',
   UpdatePermissionedNetworks = 'Update Permissioned Networks',
   UpdatePermissionedAccounts = 'Update Permissioned Accounts',
   ViewPermissionedNetworks = 'View Permissioned Networks',
@@ -765,6 +767,8 @@ export enum MetaMetricsEventName {
   OnrampProviderSelected = 'On-ramp Provider Selected',
   PasswordChanged = 'Password Changed',
   ForgotPasswordClicked = 'Forgot Password Clicked',
+  ReferralViewed = 'Referral Viewed',
+  ReferralConfirmButtonClicked = 'Referral Confirm Button Clicked',
   ResetWallet = 'Reset Wallet',
   PermissionsApproved = 'Permissions Approved',
   PermissionsRejected = 'Permissions Rejected',
@@ -777,6 +781,7 @@ export enum MetaMetricsEventName {
   PhishingPageDisplayed = 'Phishing Page Displayed',
   ProceedAnywayClicked = 'Proceed Anyway Clicked',
   PortfolioLinkClicked = 'Portfolio Link Clicked',
+  EmptyDeFiTabButtonClicked = 'Empty DeFi Tab Button Clicked',
   ProviderMethodCalled = 'Provider Method Called',
   PublicAddressCopied = 'Public Address Copied',
   QuoteError = 'Quote Error',
@@ -821,6 +826,7 @@ export enum MetaMetricsEventName {
   TokenSortPreference = 'Token Sort Preference',
   TokenListRefreshed = 'Token List Refreshed',
   NFTRemoved = 'NFT Removed',
+  EmptyNFTTabButtonClicked = 'Empty NFT Tab Button Clicked',
   TokenDetected = 'Token Detected',
   TokenHidden = 'Token Hidden',
   TokenImportCanceled = 'Token Import Canceled',
@@ -835,6 +841,8 @@ export enum MetaMetricsEventName {
   WalletSetupFailure = 'Wallet Setup Failure',
   WalletSetupCompleted = 'Wallet Setup Completed',
   SocialLoginCompleted = 'Social Login Completed',
+  AccountAlreadyExistsPageViewed = 'Account Already Exists Page Viewed',
+  AccountNotFoundPageViewed = 'Account Not Found Page Viewed',
   RehydrationPasswordAttempted = 'Rehydration Password Attempted',
   RehydrationCompleted = 'Rehydration Completed',
   RehydrationPasswordFailed = 'Rehydration Password Failed',
@@ -933,20 +941,10 @@ export enum MetaMetricsEventName {
   // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31860
   // eslint-disable-next-line @typescript-eslint/naming-convention
   sendTokenModalOpened = 'Send Token Modal Opened',
-  // Cross Chain Swaps
-  ActionCompleted = 'Action Completed',
-  ActionFailed = 'Action Failed',
-  ActionButtonClicked = 'Action Button Clicked',
-  ActionPageViewed = 'Action Page Viewed',
-  ActionSubmitted = 'Action Submitted',
-  AllQuotesOpened = 'All Quotes Opened',
-  AllQuotesSorted = 'All Quotes Sorted',
-  InputChanged = 'Input Changed',
-  InputSourceDestinationFlipped = 'Source and Destination Flipped',
-  CrossChainSwapsQuoteError = 'Cross-chain Quote Error',
-  QuoteSelected = 'Quote Selected',
-  CrossChainSwapsQuotesReceived = 'Cross-chain Quotes Received',
-  CrossChainSwapsQuotesRequested = 'Cross-chain Quotes Requested',
+  // Redesigned Send
+  SendAmountSelected = 'Send Amount Selected',
+  SendAssetSelected = 'Send Asset Selected',
+  SendRecipientSelected = 'Send Recipient Selected',
   Wallet5792Called = 'EIP-5792 API Called',
   // Delete Wallet Modal
   WalletRestored = 'Wallet Restored',
@@ -960,7 +958,6 @@ export enum MetaMetricsEventAccountType {
   ///: BEGIN:ONLY_INCLUDE_IF(keyring-snaps)
   Snap = 'snap',
   ///: END:ONLY_INCLUDE_IF
-  Social = 'social',
 }
 
 export enum QueueType {
@@ -1001,6 +998,7 @@ export enum MetaMetricsEventCategory {
   // eslint-disable-next-line @typescript-eslint/no-shadow
   Permissions = 'Permissions',
   Phishing = 'Phishing',
+  Referrals = 'Referrals',
   BackupAndSync = 'Backup And Sync',
   PushNotifications = 'Notifications',
   Retention = 'Retention',
@@ -1045,6 +1043,7 @@ export enum MetaMetricsNetworkEventSource {
 export enum MetaMetricsSwapsEventSource {
   MainView = 'Main View',
   TokenView = 'Token View',
+  ActivityTabEmptyState = 'Activity Tab Empty State',
 }
 
 export enum MetaMetricsTokenEventSource {
