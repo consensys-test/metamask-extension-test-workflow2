@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom-v5-compat';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { isValidMnemonic } from '@ethersproject/hdnode';
 import {
@@ -37,24 +37,29 @@ import {
   ButtonSize,
 } from '../../../components/component-library';
 import SRPDetailsModal from '../../../components/app/srp-details-modal';
+import {
+  forceUpdateMetamaskState,
+  resetOnboarding,
+} from '../../../store/actions';
 
 const hasUpperCase = (draftSrp) => {
   return draftSrp !== draftSrp.toLowerCase();
 };
 export default function ImportSRP({ submitSecretRecoveryPhrase }) {
+  const dispatch = useDispatch();
   const [secretRecoveryPhrase, setSecretRecoveryPhrase] = useState('');
   const [showSrpDetailsModal, setShowSrpDetailsModal] = useState(false);
   const [srpError, setSrpError] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
   const hdEntropyIndex = useSelector(getHDEntropyIndex);
   const t = useI18nContext();
   const currentKeyring = useSelector(getCurrentKeyring);
 
   useEffect(() => {
     if (currentKeyring) {
-      history.replace(ONBOARDING_CREATE_PASSWORD_ROUTE);
+      navigate(ONBOARDING_CREATE_PASSWORD_ROUTE, { replace: true });
     }
-  }, [currentKeyring, history]);
+  }, [currentKeyring, navigate]);
   const trackEvent = useContext(MetaMetricsContext);
 
   const onShowSrpDetailsModal = useCallback(() => {
@@ -67,6 +72,15 @@ export default function ImportSRP({ submitSecretRecoveryPhrase }) {
     });
     setShowSrpDetailsModal(true);
   }, [trackEvent]);
+
+  const onBack = async (e) => {
+    e.preventDefault();
+    // reset onboarding flow
+    await dispatch(resetOnboarding());
+    await forceUpdateMetamaskState(dispatch);
+
+    navigate(ONBOARDING_WELCOME_ROUTE, { replace: true });
+  };
 
   const onContinue = useCallback(() => {
     let newSrpError = '';
@@ -91,13 +105,13 @@ export default function ImportSRP({ submitSecretRecoveryPhrase }) {
         hd_entropy_index: hdEntropyIndex,
       },
     });
-    history.push(ONBOARDING_CREATE_PASSWORD_ROUTE);
+    navigate(ONBOARDING_CREATE_PASSWORD_ROUTE);
   }, [
     secretRecoveryPhrase,
     t,
     hdEntropyIndex,
     trackEvent,
-    history,
+    navigate,
     submitSecretRecoveryPhrase,
   ]);
 
@@ -125,16 +139,9 @@ export default function ImportSRP({ submitSecretRecoveryPhrase }) {
             color={IconColor.iconDefault}
             size={ButtonIconSize.Md}
             data-testid="import-srp-back-button"
-            onClick={() => {
-              history.replace(ONBOARDING_WELCOME_ROUTE);
-            }}
+            onClick={onBack}
             ariaLabel={t('back')}
           />
-        </Box>
-        <Box textAlign={TextAlign.Left}>
-          <Text variant={TextVariant.bodyMd} color={TextColor.textAlternative}>
-            {t('stepOf', [1, 2])}
-          </Text>
         </Box>
         <Box textAlign={TextAlign.Left} marginBottom={2}>
           <Text variant={TextVariant.headingLg}>{t('importAWallet')}</Text>

@@ -3,7 +3,6 @@ name: Close release bug report issue when release branch gets merged
 on:
   pull_request:
     branches:
-      - master
       - stable
     types:
       - closed
@@ -18,7 +17,7 @@ jobs:
         with:
           is-high-risk-environment: false
           skip-allow-scripts: true
-          yarn-custom-url: ${{ vars.YARN_URL }}
+          use-yarn-hydrate: true
 
       - name: Close release bug report issue
         env:

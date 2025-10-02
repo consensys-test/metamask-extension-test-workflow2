@@ -128,12 +128,10 @@ describe('MetaMask onboarding', function () {
         if (process.env.SELENIUM_BROWSER === Browser.FIREFOX) {
           const onboardingMetricsPage = new OnboardingMetricsPage(driver);
           await onboardingMetricsPage.checkPageIsLoaded();
-          await onboardingMetricsPage.clickNoThanksButton();
+          await onboardingMetricsPage.skipMetricAndContinue();
         }
 
         const startOnboardingPage = new StartOnboardingPage(driver);
-        await startOnboardingPage.checkBannerPageIsLoaded();
-        await startOnboardingPage.agreeToTermsOfUse();
         await startOnboardingPage.checkLoginPageIsLoaded();
         await startOnboardingPage.importWallet();
 
@@ -163,12 +161,12 @@ describe('MetaMask onboarding', function () {
         if (process.env.SELENIUM_BROWSER === Browser.FIREFOX) {
           const onboardingMetricsPage = new OnboardingMetricsPage(driver);
           await onboardingMetricsPage.checkPageIsLoaded();
-          await onboardingMetricsPage.clickNoThanksButton();
+          await onboardingMetricsPage.skipMetricAndContinue();
         }
 
         const startOnboardingPage = new StartOnboardingPage(driver);
-        await startOnboardingPage.checkBannerPageIsLoaded();
-        await startOnboardingPage.agreeToTermsOfUse();
+        // await startOnboardingPage.checkBannerPageIsLoaded();
+        // await startOnboardingPage.agreeToTermsOfUse();
         await startOnboardingPage.checkLoginPageIsLoaded();
         await startOnboardingPage.createWalletWithSrp();
 
@@ -310,7 +308,7 @@ describe('MetaMask onboarding', function () {
         // First screen we should be on is MetaMetrics
         const onboardingMetricsPage = new OnboardingMetricsPage(driver);
         await onboardingMetricsPage.checkPageIsLoaded();
-        await onboardingMetricsPage.clickNoThanksButton();
+        await onboardingMetricsPage.skipMetricAndContinue();
 
         // Next screen should be Secure your wallet screen
         const secureWalletPage = new SecureWalletPage(driver);

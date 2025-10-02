@@ -1,21 +1,24 @@
 import React from 'react';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { fireEvent, renderWithProvider, waitFor } from '../../../../test/jest';
+import { fireEvent, waitFor } from '@testing-library/react';
+import { renderWithProvider } from '../../../../test/lib/render-helpers-navigate';
 import { FirstTimeFlowType } from '../../../../shared/constants/onboarding';
 import {
-  ONBOARDING_DOWNLOAD_APP_ROUTE,
+  DEFAULT_ROUTE,
   ONBOARDING_PRIVACY_SETTINGS_ROUTE,
 } from '../../../helpers/constants/routes';
 import CreationSuccessful from './creation-successful';
 
-const mockHistoryPush = jest.fn();
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
-}));
+const mockUseNavigate = jest.fn();
+
+jest.mock('react-router-dom-v5-compat', () => {
+  return {
+    ...jest.requireActual('react-router-dom-v5-compat'),
+    useNavigate: () => mockUseNavigate,
+    useLocation: () => ({ search: '' }),
+  };
+});
 
 describe('Wallet Ready Page', () => {
   const mockState = {
@@ -42,6 +45,9 @@ describe('Wallet Ready Page', () => {
       ],
       firstTimeFlowType: FirstTimeFlowType.create,
       seedPhraseBackedUp: true,
+    },
+    appState: {
+      externalServicesOnboardingToggleState: true,
     },
   };
 
@@ -81,7 +87,7 @@ describe('Wallet Ready Page', () => {
     const { getByText } = renderWithProvider(<CreationSuccessful />, mockStore);
     const privacySettingsButton = getByText('Manage default settings');
     fireEvent.click(privacySettingsButton);
-    expect(mockHistoryPush).toHaveBeenCalledWith(
+    expect(mockUseNavigate).toHaveBeenCalledWith(
       ONBOARDING_PRIVACY_SETTINGS_ROUTE,
     );
   });
@@ -95,9 +101,7 @@ describe('Wallet Ready Page', () => {
     const doneButton = getByTestId('onboarding-complete-done');
     fireEvent.click(doneButton);
     await waitFor(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith(
-        ONBOARDING_DOWNLOAD_APP_ROUTE,
-      );
+      expect(mockUseNavigate).toHaveBeenCalledWith(DEFAULT_ROUTE);
     });
   });
 });
