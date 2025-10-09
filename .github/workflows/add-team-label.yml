@@ -10,3 +10,4 @@ jobs:
     uses: metamask/github-tools/.github/workflows/add-team-label.yml@MRCM-8-AutomaticLabelingWorkflow
     secrets:
       TEAM_LABEL_TOKEN: ${{ secrets.TEAM_LABEL_TOKEN }}
+
