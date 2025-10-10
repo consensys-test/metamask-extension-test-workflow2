@@ -1,0 +1,63 @@
+# On every push to a release branch (Version-v* or release/*), this workflow rebuilds the matching
+# changelog branch, re-runs the auto-changelog script, and either updates or recreates the changelog PR.
+name: Update Release Changelog PR
+
+on:
+  push:
+    branches:
+      - 'Version-v*'
+      - 'release/*'
+
+concurrency:
+  group: update-release-changelog-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  refresh-changelog:
+    name: Refresh changelog PR
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout release branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: repo
+
+      - name: Checkout github-tools repository
+        uses: actions/checkout@v4
+        with:
+          repository: MetaMask/github-tools
+          ref: 7fe185fdb0e60981c898e88d82e44ff33f604daa
+          path: repo/github-tools
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          corepack enable
+          yarn install --immutable
+
+      - name: Update changelog branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_AUTHOR_NAME: metamaskbot
+          GIT_AUTHOR_EMAIL: metamaskbot@users.noreply.github.com
+        run: |
+          set -euo pipefail
+
+          cd repo
+
+          RELEASE_BRANCH="${GITHUB_REF_NAME}"
+          PLATFORM="extension"
+          REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+
+          bash github-tools/.github/scripts/update-release-changelog.sh "${RELEASE_BRANCH}" "${PLATFORM}" "${REPO_URL}"
+
