@@ -5,23 +5,15 @@ import { useHistory } from 'react-router-dom';
 import { isEvmAccountType } from '@metamask/keyring-api';
 import { CaipAssetType } from '@metamask/utils';
 ///: END:ONLY_INCLUDE_IF
-import { isEqual } from 'lodash';
+import { InternalAccount } from '@metamask/keyring-internal-api';
 import { I18nContext } from '../../../contexts/i18n';
-import {
-  SEND_ROUTE,
-  PREPARE_SWAP_ROUTE,
-} from '../../../helpers/constants/routes';
 import { startNewDraftTransaction } from '../../../ducks/send';
-import { isHardwareKeyring } from '../../../helpers/utils/hardware';
-import { setSwapsFromToken } from '../../../ducks/swaps/swaps';
 import useRamps from '../../../hooks/ramps/useRamps/useRamps';
 import {
-  getIsSwapsChain,
-  getIsBridgeChain,
-  getCurrentKeyring,
   getNetworkConfigurationIdByChainId,
-  getSelectedInternalAccount,
   getSelectedMultichainNetworkConfiguration,
+  getIsMultichainAccountsState2Enabled,
+  getUseExternalServices,
 } from '../../../selectors';
 import useBridging from '../../../hooks/bridge/useBridging';
 
@@ -47,56 +39,53 @@ import {
   IconSize,
 } from '../../../components/component-library';
 import { getIsNativeTokenBuyable } from '../../../ducks/ramps';
-import { useMultichainSelector } from '../../../hooks/useMultichainSelector';
-import {
-  getMultichainIsEvm,
-  getMultichainIsTestnet,
-} from '../../../selectors/multichain';
 
 ///: BEGIN:ONLY_INCLUDE_IF(multichain)
 import { useHandleSendNonEvm } from '../../../components/app/wallet-overview/hooks/useHandleSendNonEvm';
 ///: END:ONLY_INCLUDE_IF
 
-///: BEGIN:ONLY_INCLUDE_IF(solana-swaps)
-import { MultichainNetworks } from '../../../../shared/constants/multichain/networks';
-///: END:ONLY_INCLUDE_IF
-
 import { getCurrentChainId } from '../../../../shared/modules/selectors/networks';
 import { Asset } from '../types/asset';
-import { getIsUnifiedUIEnabled } from '../../../ducks/bridge/selectors';
+import { navigateToSendRoute } from '../../confirmations/utils/send';
+import { isEvmChainId } from '../../../../shared/lib/asset-utils';
+import { useRedesignedSendFlow } from '../../confirmations/hooks/useRedesignedSendFlow';
 
 const TokenButtons = ({
   token,
+  account,
 }: {
   token: Asset & { type: AssetType.token };
+  account: InternalAccount;
 }) => {
   const dispatch = useDispatch();
   const t = useContext(I18nContext);
   const trackEvent = useContext(MetaMetricsContext);
   const history = useHistory();
-  const keyring = useSelector(getCurrentKeyring);
-  // @ts-expect-error keyring type is wrong maybe?
-  const usingHardwareWallet = isHardwareKeyring(keyring.type);
-  const isEvm = useMultichainSelector(getMultichainIsEvm);
-
-  const account = useSelector(getSelectedInternalAccount, isEqual);
-
+  const isExternalServicesEnabled = useSelector(getUseExternalServices);
+  const isEvm = isEvmChainId(token.chainId);
+  const isMultichainAccountsState2Enabled = useSelector(
+    getIsMultichainAccountsState2Enabled,
+  );
+  const { enabled: isSendRedesignEnabled } = useRedesignedSendFlow();
   const { chainId: multichainChainId } = useSelector(
     getSelectedMultichainNetworkConfiguration,
   );
 
-  const currentChainId = useSelector(getCurrentChainId);
+  const currentEvmChainId = useSelector(getCurrentChainId);
+
+  const currentChainId = (() => {
+    if (isMultichainAccountsState2Enabled) {
+      return token.chainId;
+    }
+
+    return isEvm ? currentEvmChainId : multichainChainId;
+  })();
+
   const networks = useSelector(getNetworkConfigurationIdByChainId) as Record<
     string,
     string
   >;
-  const isSwapsChain = useSelector((state) =>
-    getIsSwapsChain(state, isEvm ? currentChainId : multichainChainId),
-  );
 
-  const isBridgeChain = useSelector((state) =>
-    getIsBridgeChain(state, isEvm ? currentChainId : multichainChainId),
-  );
   const isBuyableChain = useSelector(getIsNativeTokenBuyable);
   const { openBuyCryptoInPdapp } = useRamps();
   const { openBridgeExperience } = useBridging();
@@ -104,10 +93,6 @@ const TokenButtons = ({
   ///: BEGIN:ONLY_INCLUDE_IF(multichain)
   const handleSendNonEvm = useHandleSendNonEvm(token.address as CaipAssetType);
   ///: END:ONLY_INCLUDE_IF
-
-  const isUnifiedUIEnabled = useSelector((state) =>
-    getIsUnifiedUIEnabled(state, isEvm ? currentChainId : multichainChainId),
-  );
 
   useEffect(() => {
     if (token.isERC721) {
@@ -120,18 +105,20 @@ const TokenButtons = ({
     }
   }, [token.isERC721, token.address, dispatch]);
 
+  // TODO BIP 44 Refactor: Remove this code
   const setCorrectChain = useCallback(async () => {
     // If we aren't presently on the chain of the asset, change to it
     if (
-      currentChainId !== token.chainId &&
-      multichainChainId !== token.chainId
+      currentEvmChainId !== token.chainId &&
+      multichainChainId !== token.chainId &&
+      !isMultichainAccountsState2Enabled
     ) {
       try {
         const networkConfigurationId = networks[token.chainId];
         await dispatch(setActiveNetworkWithError(networkConfigurationId));
       } catch (err) {
         console.error(`Failed to switch chains.
-        Target chainId: ${token.chainId}, Current chainId: ${currentChainId}.
+        Target chainId: ${token.chainId}, Current chainId: ${currentEvmChainId}.
         ${
           // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31893
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -140,7 +127,14 @@ const TokenButtons = ({
         throw err;
       }
     }
-  }, [currentChainId, multichainChainId, networks, token.chainId, dispatch]);
+  }, [
+    isMultichainAccountsState2Enabled,
+    currentEvmChainId,
+    multichainChainId,
+    networks,
+    token.chainId,
+    dispatch,
+  ]);
 
   const handleBuyAndSellOnClick = useCallback(() => {
     openBuyCryptoInPdapp();
@@ -180,7 +174,7 @@ const TokenButtons = ({
     );
 
     ///: BEGIN:ONLY_INCLUDE_IF(multichain)
-    if (!isEvmAccountType(account.type)) {
+    if (!isEvmAccountType(account.type) && !isSendRedesignEnabled) {
       await handleSendNonEvm();
       // Early return, not to let the non-EVM flow slip into the native send flow.
       return;
@@ -195,7 +189,10 @@ const TokenButtons = ({
           details: token,
         }),
       );
-      history.push(SEND_ROUTE);
+      navigateToSendRoute(history, isSendRedesignEnabled, {
+        address: token.address,
+        chainId: token.chainId,
+      });
 
       // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31973
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -214,83 +211,14 @@ const TokenButtons = ({
     ///: BEGIN:ONLY_INCLUDE_IF(multichain)
     handleSendNonEvm,
     ///: END:ONLY_INCLUDE_IF
+    isSendRedesignEnabled,
   ]);
-
-  const isTestnet = useSelector(getMultichainIsTestnet);
-
-  const handleBridgeOnClick = useCallback(
-    async (isSwap: boolean) => {
-      await setCorrectChain();
-      // Handle clicking from the asset details page
-      openBridgeExperience(
-        MetaMetricsSwapsEventSource.TokenView,
-        token,
-        isSwap,
-      );
-    },
-    [token, setCorrectChain, openBridgeExperience],
-  );
 
   const handleSwapOnClick = useCallback(async () => {
-    ///: BEGIN:ONLY_INCLUDE_IF(solana-swaps)
-    if (multichainChainId === MultichainNetworks.SOLANA) {
-      handleBridgeOnClick(true);
-      return;
-    }
-    ///: END:ONLY_INCLUDE_IF
-
-    // Check if unified UI is enabled and route to bridge page for swaps
-    if (isUnifiedUIEnabled) {
-      handleBridgeOnClick(true); // true indicates it's a swap
-      return;
-    }
-
     await setCorrectChain();
-
-    trackEvent({
-      event: MetaMetricsEventName.NavSwapButtonClicked,
-      category: MetaMetricsEventCategory.Swaps,
-      properties: {
-        // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31860
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        token_symbol: token.symbol,
-        location: MetaMetricsSwapsEventSource.TokenView,
-        text: 'Swap',
-        // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31860
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        chain_id: currentChainId,
-      },
-    });
-    dispatch(
-      setSwapsFromToken({
-        ...token,
-        address: token.address?.toLowerCase(),
-        iconUrl: token.image,
-        balance: token?.balance?.value,
-        string: token?.balance?.display,
-      }),
-    );
-    if (usingHardwareWallet) {
-      global.platform.openExtensionInBrowser?.(
-        PREPARE_SWAP_ROUTE,
-        undefined,
-        false,
-      );
-    } else {
-      history.push(PREPARE_SWAP_ROUTE);
-    }
-  }, [
-    currentChainId,
-    trackEvent,
-    dispatch,
-    history,
-    token,
-    usingHardwareWallet,
-    setCorrectChain,
-    handleBridgeOnClick,
-    multichainChainId,
-    isUnifiedUIEnabled,
-  ]);
+    // Handle clicking from the asset details page
+    openBridgeExperience(MetaMetricsSwapsEventSource.TokenView, token);
+  }, [token, setCorrectChain, openBridgeExperience]);
 
   return (
     <Box
@@ -302,12 +230,12 @@ const TokenButtons = ({
         className="token-overview__button"
         Icon={
           <Icon
-            name={IconName.Money}
+            name={IconName.Dollar}
             color={IconColor.iconAlternative}
             size={IconSize.Md}
           />
         }
-        label={t('buyAndSell')}
+        label={t('buy')}
         data-testid="token-overview-buy"
         onClick={handleBuyAndSellOnClick}
         // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31880
@@ -334,32 +262,16 @@ const TokenButtons = ({
         className="token-overview__button"
         Icon={
           <Icon
-            name={IconName.SwapHorizontal}
+            name={IconName.SwapVertical}
             color={IconColor.iconAlternative}
             size={IconSize.Md}
           />
         }
         onClick={handleSwapOnClick}
+        data-testid="token-overview-swap"
         label={t('swap')}
-        disabled={!isSwapsChain}
+        disabled={!isExternalServicesEnabled}
       />
-
-      {!isUnifiedUIEnabled && !isTestnet && isBridgeChain && (
-        <IconButton
-          className="token-overview__button"
-          data-testid="token-overview-bridge"
-          Icon={
-            <Icon
-              name={IconName.Bridge}
-              color={IconColor.iconAlternative}
-              size={IconSize.Md}
-            />
-          }
-          label={t('bridge')}
-          onClick={() => handleBridgeOnClick(false)}
-          disabled={!isBridgeChain}
-        />
-      )}
     </Box>
   );
 };

@@ -4,12 +4,18 @@ const {
 } = require('@metamask/snaps-utils');
 const { merge, mergeWith } = require('lodash');
 const { toHex } = require('@metamask/controller-utils');
-const {
-  ETHERSCAN_SUPPORTED_CHAIN_IDS,
-} = require('@metamask/preferences-controller');
 const { mockNetworkStateOld } = require('../stub/networks');
 
-const { CHAIN_IDS } = require('../../shared/constants/network');
+const {
+  ARBITRUM_DISPLAY_NAME,
+  AVALANCHE_DISPLAY_NAME,
+  BNB_DISPLAY_NAME,
+  CHAIN_IDS,
+  LOCALHOST_DISPLAY_NAME,
+  OPTIMISM_DISPLAY_NAME,
+  POLYGON_DISPLAY_NAME,
+  ZK_SYNC_ERA_DISPLAY_NAME,
+} = require('../../shared/constants/network');
 const { SMART_CONTRACTS } = require('./seeder/smart-contracts');
 const {
   DAPP_URL,
@@ -33,25 +39,27 @@ function onboardingFixture() {
         fullScreenGasPollTokens: [],
         notificationGasPollTokens: [],
         popupGasPollTokens: [],
-        qrHardware: {},
         recoveryPhraseReminderHasBeenShown: false,
         recoveryPhraseReminderLastShown:
           '__FIXTURE_SUBSTITUTION__currentDateInMilliseconds',
         showTestnetMessageInDropdown: true,
         trezorModel: null,
+        hasShownMultichainAccountsIntroModal: true,
+        showShieldEntryModalOnce: false,
       },
       NetworkController: {
         ...mockNetworkStateOld({
           id: 'networkConfigurationId',
           chainId: CHAIN_IDS.LOCALHOST,
-          nickname: 'Localhost 8545',
+          nickname: LOCALHOST_DISPLAY_NAME,
           rpcUrl: 'http://localhost:8545',
           ticker: 'ETH',
           blockExplorerUrl: undefined,
         }),
         providerConfig: { id: 'networkConfigurationId' },
       },
-      NetworkOrderController: {
+      NetworkOrderController: {},
+      NetworkEnablementController: {
         enabledNetworkMap: {
           eip155: {
             [CHAIN_IDS.LOCALHOST]: true,
@@ -93,6 +101,7 @@ function onboardingFixture() {
           },
           tokenNetworkFilter: {},
           shouldShowAggregatedBalancePopover: true,
+          avatarType: 'maskicon',
         },
         useExternalServices: true,
         theme: 'light',
@@ -103,30 +112,6 @@ function onboardingFixture() {
         useCurrencyRateCheck: true,
         useMultiAccountBalanceChecker: true,
         isMultiAccountBalancesEnabled: true,
-        showIncomingTransactions: {
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.MAINNET]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.GOERLI]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.BSC]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.BSC_TESTNET]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.OPTIMISM]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.OPTIMISM_SEPOLIA]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.POLYGON]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.POLYGON_TESTNET]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.AVALANCHE]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.AVALANCHE_TESTNET]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.FANTOM]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.FANTOM_TESTNET]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.SEPOLIA]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.LINEA_GOERLI]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.LINEA_SEPOLIA]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.LINEA_MAINNET]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.MOONBEAM]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.MOONBEAM_TESTNET]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.MOONRIVER]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.GNOSIS]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.MEGAETH_TESTNET]: true,
-          [ETHERSCAN_SUPPORTED_CHAIN_IDS.MONAD_TESTNET]: true,
-        },
       },
       SelectedNetworkController: {
         domains: {},
@@ -141,6 +126,7 @@ function onboardingFixture() {
         },
       },
       UserStorageController: {},
+      MultichainAccountService: {},
       TokensController: {
         allDetectedTokens: {},
         allIgnoredTokens: {},
@@ -204,7 +190,7 @@ class FixtureBuilder {
       networkOrder: this.fixture.data.NetworkOrderController?.networkOrder,
     });
     // Replace instead of merge for enabledNetworkMap
-    this.fixture.data.NetworkOrderController.enabledNetworkMap = data;
+    this.fixture.data.NetworkEnablementController.enabledNetworkMap = data;
     return this;
   }
 
@@ -316,7 +302,7 @@ class FixtureBuilder {
       networkConfigurations: {
         networkConfigurationId: {
           chainId: CHAIN_IDS.BSC,
-          nickname: 'Binance Chain',
+          nickname: BNB_DISPLAY_NAME,
           rpcPrefs: {},
           rpcUrl: 'https://bsc-dataseed.binance.org',
           ticker: 'BNB',
@@ -331,6 +317,12 @@ class FixtureBuilder {
     return this.withNetworkController({ selectedNetworkClientId: 'mainnet' });
   }
 
+  withNetworkControllerOnArbitrumGoerli() {
+    return this.withNetworkController({
+      selectedNetworkClientId: 'arbitrum-goerli',
+    });
+  }
+
   withNetworkControllerOnLinea() {
     return this.withNetworkController({
       selectedNetworkClientId: 'linea-mainnet',
@@ -342,7 +334,7 @@ class FixtureBuilder {
       networkConfigurations: {
         networkConfigurationId: {
           chainId: CHAIN_IDS.LINEA_MAINNET,
-          nickname: 'Localhost 8545',
+          nickname: LOCALHOST_DISPLAY_NAME,
           rpcPrefs: {},
           rpcUrl: 'http://localhost:8545',
           ticker: 'ETH',
@@ -358,7 +350,7 @@ class FixtureBuilder {
       networkConfigurations: {
         networkConfigurationId: {
           chainId: CHAIN_IDS.OPTIMISM,
-          nickname: 'Localhost 8545',
+          nickname: LOCALHOST_DISPLAY_NAME,
           rpcPrefs: {},
           rpcUrl: 'https://mainnet.infura.io',
           ticker: 'ETH',
@@ -374,7 +366,7 @@ class FixtureBuilder {
       networkConfigurations: {
         networkConfigurationId: {
           chainId: CHAIN_IDS.POLYGON,
-          nickname: 'Polygon Mainnet',
+          nickname: POLYGON_DISPLAY_NAME,
           rpcPrefs: {},
           rpcUrl: 'https://mainnet.infura.io',
           ticker: 'ETH',
@@ -445,6 +437,26 @@ class FixtureBuilder {
             blockExplorerUrl: 'https://testnet.monadexplorer.com',
           },
           id: 'monad-testnet',
+          type: 'rpc',
+          isCustom: true,
+        },
+      },
+    });
+  }
+
+  withNetworkControllerOnSei() {
+    return this.withNetworkController({
+      selectedNetworkClientId: 'sei',
+      networkConfigurations: {
+        sei: {
+          chainId: CHAIN_IDS.SEI,
+          nickname: 'Sei',
+          rpcUrl: 'https://sei-mainnet.infura.io/v3/',
+          ticker: 'SEI',
+          rpcPrefs: {
+            blockExplorerUrl: 'https://seitrace.com',
+          },
+          id: 'sei',
           type: 'rpc',
           isCustom: true,
         },
@@ -925,8 +937,13 @@ class FixtureBuilder {
   }
 
   /**
-   * @deprecated this method should not be used, as the `smartTransactionsOptInStatus` value is overridden by the migration 135
-   * Use the `toggleStxSetting` flow to disable this setting effectively.
+   * Note: When using this method, you also need to disable the smart transactions
+   * migration in your test by adding the following manifest flag:
+   * ```
+   * manifestFlags: {
+   *   testing: { disableSmartTransactionsOverride: true },
+   * }
+   * ```
    */
   withPreferencesControllerSmartTransactionsOptedOut() {
     return this.withPreferencesController({
@@ -1095,6 +1112,169 @@ class FixtureBuilder {
 
   withSubjectMetadataController(data) {
     merge(this.fixture.data.SubjectMetadataController, data);
+    return this;
+  }
+
+  /**
+   * Configure the Account Tree Controller state.
+   * Builds a BIP-44 compliant tree by grouping HD accounts by entropy source
+   * (primary HD keyring ID) into entropy wallets, and non-HD accounts by
+   * keyring/snap into single-account groups.
+   *
+   * @param {object} [data] - Optional overrides to merge into the default state.
+   * @param {object} [data.accountTree] - Account tree structure to set.
+   * @param {object} [data.accountGroupsMetadata] - Per-group metadata map.
+   * @param {object} [data.accountWalletsMetadata] - Per-wallet metadata map.
+   * @returns {FixtureBuilder}
+   */
+  withAccountTreeController(data = {}) {
+    const buildDefaultAccountTree = () => {
+      const accountsById =
+        this.fixture?.data?.AccountsController?.internalAccounts?.accounts ||
+        {};
+      const selectedAccountId =
+        this.fixture?.data?.AccountsController?.internalAccounts
+          ?.selectedAccount || null;
+      const accountsList = Object.values(accountsById);
+
+      const wallets = {};
+
+      // 1) Entropy (HD) wallets grouped by entropySource, defaulting to BIP-44 account index 0
+      const entropyToAccountIds = {};
+      for (const account of accountsList) {
+        const keyringType = account?.metadata?.keyring?.type;
+        if (keyringType === 'HD Key Tree') {
+          const entropyId =
+            account?.options?.entropySource || 'UNKNOWN_ENTROPY_SOURCE';
+          if (!entropyToAccountIds[entropyId]) {
+            entropyToAccountIds[entropyId] = [];
+          }
+          entropyToAccountIds[entropyId].push(account.id);
+        }
+      }
+
+      Object.entries(entropyToAccountIds).forEach(
+        ([entropyId, accountIds], index) => {
+          const walletId = `entropy:${entropyId}`;
+          const groupId = `${walletId}/0`;
+          wallets[walletId] = {
+            id: walletId,
+            type: 'entropy',
+            groups: {
+              [groupId]: {
+                id: groupId,
+                type: 'multichain-account',
+                accounts: accountIds,
+                metadata: {
+                  name: 'Default',
+                  pinned: false,
+                  hidden: false,
+                  entropy: { groupIndex: 0 },
+                },
+              },
+            },
+            metadata: {
+              name: `Wallet ${index + 1}`,
+              entropy: { id: entropyId },
+            },
+          };
+        },
+      );
+
+      // 2) Keyring wallets (Ledger, Trezor, Simple Key Pair, Custody, etc.)
+      for (const account of accountsList) {
+        const keyringType = account?.metadata?.keyring?.type;
+        const isHd = keyringType === 'HD Key Tree';
+        const isSnap = Boolean(account?.metadata?.snap?.id);
+        if (!isHd && keyringType && !isSnap) {
+          const walletId = `keyring:${keyringType}`;
+          const lowerAddress = (account?.address || '').toLowerCase();
+          const groupId = `${walletId}/${lowerAddress}`;
+          wallets[walletId] ||= {
+            id: walletId,
+            type: 'keyring',
+            groups: {},
+            metadata: { name: keyringType, keyring: { type: keyringType } },
+          };
+          wallets[walletId].groups[groupId] = {
+            id: groupId,
+            type: 'single-account',
+            accounts: [account.id],
+            metadata: {
+              name: `${keyringType} Account 1`,
+              pinned: false,
+              hidden: false,
+            },
+          };
+        }
+      }
+
+      // 3) Snap wallets grouped by snap id into single-account groups
+      for (const account of accountsList) {
+        const snapId = account?.metadata?.snap?.id;
+        if (snapId) {
+          const walletId = `snap:${snapId}`;
+          const lowerAddress = (account?.address || '').toLowerCase();
+          const groupId = `${walletId}/${lowerAddress}`;
+          wallets[walletId] ||= {
+            id: walletId,
+            type: 'snap',
+            groups: {},
+            metadata: {
+              name: account?.metadata?.snap?.name || snapId,
+              snap: { id: snapId },
+            },
+          };
+          wallets[walletId].groups[groupId] = {
+            id: groupId,
+            type: 'single-account',
+            accounts: [account.id],
+            metadata: {
+              name: `${account?.metadata?.snap?.name || 'Snap Account'} 1`,
+              pinned: false,
+              hidden: false,
+            },
+          };
+        }
+      }
+
+      // Determine selectedAccountGroup: group containing selected internal account
+      let selectedAccountGroup = null;
+      if (selectedAccountId) {
+        for (const wallet of Object.values(wallets)) {
+          const match = Object.values(wallet.groups).find((group) =>
+            group.accounts.includes(selectedAccountId),
+          );
+          if (match) {
+            selectedAccountGroup = match.id;
+            break;
+          }
+        }
+      }
+
+      // Fallback: select the first available group
+      if (!selectedAccountGroup) {
+        const firstWallet = Object.values(wallets)[0];
+        const firstGroup = firstWallet
+          ? Object.values(firstWallet.groups)[0]
+          : null;
+        selectedAccountGroup = firstGroup ? firstGroup.id : null;
+      }
+
+      return { selectedAccountGroup, wallets };
+    };
+
+    this.fixture.data.AccountTreeController ??= {};
+
+    const defaultState = {
+      accountTree: buildDefaultAccountTree(),
+      accountGroupsMetadata: {},
+      accountWalletsMetadata: {},
+    };
+
+    // Allow callers to override/extend defaults.
+    merge(defaultState, data);
+    merge(this.fixture.data.AccountTreeController, defaultState);
     return this;
   }
 
@@ -1747,7 +1927,7 @@ class FixtureBuilder {
       networkConfigurations: {
         'op-mainnet': {
           chainId: CHAIN_IDS.OPTIMISM,
-          nickname: 'OP Mainnet',
+          nickname: OPTIMISM_DISPLAY_NAME,
           rpcPrefs: {},
           rpcUrl: 'https://mainnet.optimism.io',
           ticker: 'ETH',
@@ -1755,7 +1935,7 @@ class FixtureBuilder {
         },
         'polygon-mainnet': {
           chainId: CHAIN_IDS.POLYGON,
-          nickname: 'Polygon Mainnet',
+          nickname: POLYGON_DISPLAY_NAME,
           rpcPrefs: {},
           rpcUrl: 'https://polygon-rpc.com',
           ticker: 'MATIC',
@@ -1763,7 +1943,7 @@ class FixtureBuilder {
         },
         'arbitrum-one': {
           chainId: CHAIN_IDS.ARBITRUM,
-          nickname: 'Arbitrum One',
+          nickname: ARBITRUM_DISPLAY_NAME,
           rpcPrefs: {},
           rpcUrl: 'https://arb1.arbitrum.io/rpc',
           ticker: 'ETH',
@@ -1771,7 +1951,7 @@ class FixtureBuilder {
         },
         'avalanche-mainnet': {
           chainId: CHAIN_IDS.AVALANCHE,
-          nickname: 'Avalanche Network C-Chain',
+          nickname: AVALANCHE_DISPLAY_NAME,
           rpcPrefs: {},
           rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
           ticker: 'AVAX',
@@ -1779,7 +1959,7 @@ class FixtureBuilder {
         },
         'bnb-mainnet': {
           chainId: CHAIN_IDS.BSC,
-          nickname: 'BNB Chain',
+          nickname: BNB_DISPLAY_NAME,
           rpcPrefs: {},
           rpcUrl: 'https://bsc-dataseed.binance.org',
           ticker: 'BNB',
@@ -1787,7 +1967,7 @@ class FixtureBuilder {
         },
         'zksync-mainnet': {
           chainId: CHAIN_IDS.ZKSYNC_ERA,
-          nickname: 'zkSync Era',
+          nickname: ZK_SYNC_ERA_DISPLAY_NAME,
           rpcPrefs: {},
           rpcUrl: 'https://mainnet.era.zksync.io',
           ticker: 'ETH',
@@ -1884,19 +2064,15 @@ class FixtureBuilder {
 
   withBackupAndSyncSettings(options = {}) {
     const {
-      isProfileSyncingEnabled = true,
+      isBackupAndSyncEnabled = true,
       isAccountSyncingEnabled = true,
-      isProfileSyncingUpdateLoading = false,
-      isAccountSyncingUpdateLoading = false,
-      hasAccountSyncingSyncedAtLeastOnce = false,
+      isBackupAndSyncUpdateLoading = false,
     } = options;
 
     merge(this.fixture.data.UserStorageController, {
-      isProfileSyncingEnabled,
+      isBackupAndSyncEnabled,
       isAccountSyncingEnabled,
-      isProfileSyncingUpdateLoading,
-      isAccountSyncingUpdateLoading,
-      hasAccountSyncingSyncedAtLeastOnce,
+      isBackupAndSyncUpdateLoading,
     });
     return this;
   }

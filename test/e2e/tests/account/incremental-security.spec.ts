@@ -39,13 +39,11 @@ describe('Incremental Security', function (this: Suite) {
         // skip collect metametrics
         if (process.env.SELENIUM_BROWSER === Browser.FIREFOX) {
           const onboardingMetricsPage = new OnboardingMetricsPage(driver);
-          await onboardingMetricsPage.clickNoThanksButton();
+          await onboardingMetricsPage.skipMetricAndContinue();
         }
 
         // agree to terms of use and start onboarding
         const startOnboardingPage = new StartOnboardingPage(driver);
-        await startOnboardingPage.checkBannerPageIsLoaded();
-        await startOnboardingPage.agreeToTermsOfUse();
         await startOnboardingPage.checkLoginPageIsLoaded();
         await startOnboardingPage.createWalletWithSrp();
 
@@ -62,7 +60,7 @@ describe('Incremental Security', function (this: Suite) {
         // skip collect metametrics
         if (process.env.SELENIUM_BROWSER !== Browser.FIREFOX) {
           const onboardingMetricsPage = new OnboardingMetricsPage(driver);
-          await onboardingMetricsPage.clickNoThanksButton();
+          await onboardingMetricsPage.skipMetricAndContinue();
         }
 
         // complete onboarding and pin extension
@@ -90,7 +88,6 @@ describe('Incremental Security', function (this: Suite) {
 
         // backup reminder is displayed and it directs user to the backup SRP page
         await homePage.goToBackupSRPPage();
-        await secureWalletPage.checkPageIsLoaded();
 
         // reveal and confirm the Secret Recovery Phrase on backup SRP page
         await secureWalletPage.revealAndConfirmSRP(WALLET_PASSWORD);

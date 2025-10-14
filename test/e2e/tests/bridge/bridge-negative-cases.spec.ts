@@ -4,7 +4,6 @@ import HomePage from '../../page-objects/pages/home/homepage';
 import { Driver } from '../../webdriver/driver';
 import BridgeQuotePage from '../../page-objects/pages/bridge/quote-page';
 import ActivityListPage from '../../page-objects/pages/home/activity-list';
-import { disableStxSetting } from '../../page-objects/flows/toggle-stx-setting.flow';
 import {
   getBridgeNegativeCasesFixtures,
   getInsufficientFundsFixtures,
@@ -28,7 +27,7 @@ describe('Bridge functionality', function (this: Suite) {
         await unlockWallet(driver);
         const homePage = new HomePage(driver);
         await homePage.checkExpectedBalanceIsDisplayed('$84,992.50', 'USD');
-        await homePage.startBridgeFlow();
+        await homePage.startSwapFlow();
 
         const bridgePage = new BridgeQuotePage(driver);
         await bridgePage.enterBridgeQuote({
@@ -58,7 +57,7 @@ describe('Bridge functionality', function (this: Suite) {
         await unlockWallet(driver);
         const homePage = new HomePage(driver);
         await homePage.checkExpectedBalanceIsDisplayed('$85,000.00', 'USD');
-        await homePage.startBridgeFlow();
+        await homePage.startSwapFlow();
 
         const bridgePage = await enterBridgeQuote(driver);
         await bridgePage.checkNoTradeRouteMessageIsDisplayed();
@@ -80,7 +79,7 @@ describe('Bridge functionality', function (this: Suite) {
         await unlockWallet(driver);
         const homePage = new HomePage(driver);
         await homePage.checkExpectedBalanceIsDisplayed('$85,000.00', 'USD');
-        await homePage.startBridgeFlow();
+        await homePage.startSwapFlow();
 
         const bridgePage = await enterBridgeQuote(driver);
         await bridgePage.checkNoTradeRouteMessageIsDisplayed();
@@ -103,7 +102,7 @@ describe('Bridge functionality', function (this: Suite) {
         const homePage = new HomePage(driver);
         await homePage.checkExpectedBalanceIsDisplayed('$85,000.00', 'USD');
 
-        await homePage.startBridgeFlow();
+        await homePage.startSwapFlow();
 
         const bridgePage = await enterBridgeQuote(driver);
         await bridgePage.checkNoTradeRouteMessageIsDisplayed();
@@ -124,13 +123,9 @@ describe('Bridge functionality', function (this: Suite) {
       async ({ driver }) => {
         await unlockWallet(driver);
 
-        // disable smart transactions step by step for all bridge flows
-        // we cannot use fixtures because migration 135 overrides the opt in value to true
-        await disableStxSetting(driver);
-
         const homePage = new HomePage(driver);
         await homePage.checkExpectedBalanceIsDisplayed('$84,992.50', 'USD');
-        await homePage.startBridgeFlow();
+        await homePage.startSwapFlow();
 
         const bridgePage = await enterBridgeQuote(driver);
         await bridgePage.submitQuote();
@@ -155,13 +150,9 @@ describe('Bridge functionality', function (this: Suite) {
       async ({ driver }) => {
         await unlockWallet(driver);
 
-        // disable smart transactions step by step for all bridge flows
-        // we cannot use fixtures because migration 135 overrides the opt in value to true
-        await disableStxSetting(driver);
-
         const homePage = new HomePage(driver);
         await homePage.checkExpectedBalanceIsDisplayed('$84,992.50', 'USD');
-        await homePage.startBridgeFlow();
+        await homePage.startSwapFlow();
 
         const bridgePage = await enterBridgeQuote(driver);
         await bridgePage.submitQuote();
@@ -187,13 +178,9 @@ describe('Bridge functionality', function (this: Suite) {
       async ({ driver }) => {
         await unlockWallet(driver);
 
-        // disable smart transactions step by step for all bridge flows
-        // we cannot use fixtures because migration 135 overrides the opt in value to true
-        await disableStxSetting(driver);
-
         const homePage = new HomePage(driver);
         await homePage.checkExpectedBalanceIsDisplayed('$84,992.50', 'USD');
-        await homePage.startBridgeFlow();
+        await homePage.startSwapFlow();
 
         const bridgePage = await enterBridgeQuote(driver);
         await bridgePage.submitQuote();

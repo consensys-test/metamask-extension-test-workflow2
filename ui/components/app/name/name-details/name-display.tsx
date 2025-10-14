@@ -1,11 +1,13 @@
 import React, { memo } from 'react';
 import { NameType } from '@metamask/name-controller';
+import { AvatarAccountSize } from '@metamask/design-system-react';
 import classnames from 'classnames';
 import Identicon from '../../../ui/identicon';
 import { Icon, IconSize, Text } from '../../../component-library';
 import { TextVariant } from '../../../../helpers/constants/design-system';
 import { useDisplayName } from '../../../../hooks/useDisplayName';
 import { TrustSignalDisplayState } from '../../../../hooks/useTrustSignals';
+import { PreferredAvatar } from '../../preferred-avatar';
 import ShortenedName from './shortened-name';
 import FormattedName from './formatted-value';
 
@@ -26,8 +28,9 @@ const NameDisplay = memo(
     variation,
     handleClick,
     showFullName = false,
+    ...props
   }: NameDisplayProps) => {
-    const { name, image, icon, displayState } = useDisplayName({
+    const { name, image, icon, displayState, isAccount } = useDisplayName({
       value,
       type,
       preferContractSymbol,
@@ -41,30 +44,39 @@ const NameDisplay = memo(
           <Icon
             name={icon.name}
             className="name__icon"
-            size={IconSize.Md}
+            size={IconSize.Sm}
             color={icon.color}
           />
         );
       }
 
-      // Otherwise, use Identicon
-      return <Identicon address={value} diameter={16} image={image} />;
+      if (image) {
+        return <Identicon address={value} diameter={16} image={image} />;
+      }
+
+      return (
+        <PreferredAvatar
+          className="rounded-md"
+          address={value}
+          size={AvatarAccountSize.Xs}
+        />
+      );
     };
 
     const renderName = () => {
       if (!name) {
-        return <FormattedName value={value} type={type} />;
+        return <FormattedName value={value} type={type} {...props} />;
       }
 
       if (showFullName) {
         return (
-          <Text className="name__name" variant={TextVariant.bodyMd}>
+          <Text className="name__name" variant={TextVariant.bodyMd} {...props}>
             {name}
           </Text>
         );
       }
 
-      return <ShortenedName name={name} />;
+      return <ShortenedName name={name} {...props} />;
     };
 
     return (
@@ -73,7 +85,7 @@ const NameDisplay = memo(
           name: true,
           // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31860
           // eslint-disable-next-line @typescript-eslint/naming-convention
-          name__clickable: Boolean(handleClick),
+          name__clickable: Boolean(handleClick) && !isAccount,
           // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31860
           // eslint-disable-next-line @typescript-eslint/naming-convention
           name__saved: displayState === TrustSignalDisplayState.Petname,

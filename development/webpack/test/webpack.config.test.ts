@@ -90,8 +90,8 @@ ${Object.entries(env)
     const stats = options.stats as { preset: string };
     assert.strictEqual(stats.preset, 'none');
     const fallback = options.resolve.fallback as Record<string, false>;
-    assert.strictEqual(typeof fallback['react-devtools'], 'string');
-    assert.strictEqual(typeof fallback['remote-redux-devtools'], 'string');
+    assert.strictEqual(typeof fallback['react-devtools-core'], 'boolean');
+    assert.strictEqual(typeof fallback['remote-redux-devtools'], 'boolean');
     assert.strictEqual(options.optimization.minimize, false);
     assert.strictEqual(options.optimization.sideEffects, false);
     assert.strictEqual(options.optimization.providedExports, false);
@@ -151,14 +151,7 @@ ${Object.entries(env)
         // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31860
         // eslint-disable-next-line @typescript-eslint/naming-convention
         content_scripts: [
-          {
-            js: [
-              'ignored',
-              'scripts/contentscript.js',
-              'scripts/inpage.js',
-              'ignored',
-            ],
-          },
+          { js: ['scripts/contentscript.js', 'scripts/inpage.js'] },
         ],
       },
       'brave',
@@ -208,6 +201,7 @@ ${Object.entries(env)
         SEGMENT_PROD_WRITE_KEY: '-',
         GOOGLE_PROD_CLIENT_ID: '00000000000',
         APPLE_PROD_CLIENT_ID: '00000000000',
+        METAMASK_REACT_REDUX_DEVTOOLS: 'true',
       },
     );
     // webpack logs a warning if we specify `watch: true`, `getWebpackInstance`
@@ -224,8 +218,8 @@ ${Object.entries(env)
     const stats = instance.options.stats as { preset: string };
     assert.strictEqual(stats.preset, 'normal');
     const fallback = instance.options.resolve.fallback as Record<string, false>;
-    assert.strictEqual(fallback['react-devtools'], false);
-    assert.strictEqual(fallback['remote-redux-devtools'], false);
+    assert.strictEqual(typeof fallback['react-devtools-core'], 'string');
+    assert.strictEqual(typeof fallback['remote-redux-devtools'], 'string');
     assert.strictEqual(instance.options.optimization.minimize, true);
     assert.strictEqual(instance.options.optimization.sideEffects, true);
     assert.strictEqual(instance.options.optimization.providedExports, true);
@@ -308,7 +302,7 @@ ${Object.entries(env)
   });
 
   // these tests should be temporary until the below options are supported
-  const unsupportedOptions = [['--lavamoat'], ['--manifest_version', '3']];
+  const unsupportedOptions = [['--manifest_version', '3']];
   for (const args of unsupportedOptions) {
     it(`should throw on unsupported option \`${args.join('=')}\``, () => {
       assert.throws(

@@ -60,7 +60,7 @@ export const mockMultichainAccountsFeatureFlagStateTwo = (
         statusCode: 200,
         json: [
           {
-            enableMultichainAccounts: {
+            enableMultichainAccountsState2: {
               enabled: true,
               featureVersion: '2',
               minimumVersion: '12.19.0',
@@ -76,11 +76,15 @@ export async function withMultichainAccountsDesignEnabled(
     testSpecificMock = mockMultichainAccountsFeatureFlag,
     accountType = AccountType.MultiSRP,
     state = 1,
+    dapp,
+    dappPaths,
   }: {
     title?: string;
     testSpecificMock?: (mockServer: Mockttp) => Promise<MockedEndpoint>;
     accountType?: AccountType;
     state?: number;
+    dapp?: boolean;
+    dappPaths?: string[];
   },
   test: (driver: Driver) => Promise<void>,
 ) {
@@ -105,10 +109,13 @@ export async function withMultichainAccountsDesignEnabled(
       fixtures: fixture,
       testSpecificMock,
       title,
-      dapp: true,
+      dapp,
+      dappPaths,
     },
     async ({ driver }: { driver: Driver; mockServer: Mockttp }) => {
-      if (accountType === AccountType.HardwareWallet) {
+      // State 2 uses unified account group balance (fiat) and may not equal '25 ETH'.
+      // Skip strict balance validation for hardware wallets and state 2 flows.
+      if (accountType === AccountType.HardwareWallet || state === 2) {
         await loginWithoutBalanceValidation(driver);
       } else {
         await loginWithBalanceValidation(driver);
