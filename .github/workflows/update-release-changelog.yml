@@ -20,7 +20,7 @@ jobs:
     uses: MetaMask/github-tools/.github/workflows/update-release-changelog.yml@INFRA-2576-UpdateChangelogAutomatically
     with:
       release-branch: ${{ github.ref_name }}
-      repository-url: ${{ github.server_url }}/${{ github.repository }}
+      repository-url: https://github.com/MetaMask/metamask-extension
       platform: extension
       github-tools-version: INFRA-2576-UpdateChangelogAutomatically
       previous-version-ref: null
