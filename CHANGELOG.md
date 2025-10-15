@@ -7,6 +7,246 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [999.95.0]
+
+### Uncategorized
+
+- Release test 1
+- Hardcode update workflow temp fix
+- Disabled workflows for testing
+- bump semvar version to 13.4.2
+- chore: Bump Snaps packages (#36613)
+- Fixed a bug where first permitting accounts via the EVM provider would cause all requests to the Solana Wallet Standard provider (#36434)
+  to fail with an `The requested account and/or method has not been
+authorized by the user.` error until the user fully revoked dapp
+  permissions and then permitted accounts using the Solana Wallet Standard
+  provider first.
+- chore: Remove `imagemin` (#36563)
+- Bump version to 13.4.1 (#36605)
+- bump semvar version to 13.4.1
+- Update tar-fs to 2.1.4 (#36560)
+- Deprecate components that are now available in the design system (#36544)
+- Added support for Monad discover button (#36389)
+- Use loading indicator when approving an add network (#36403)
+- Bump assets controllers to v77.0.1 (#36419)
+- Remove blockie-identicon and the 'blo' dependency (#36429)
+- Remove unused nft-info component (#36397)
+- Remove internal AvatarAccount component (#36387)
+- Renamed formatters to useFormatters (#36267)
+- Remove extra add network modal (#36309)
+- Changed account selector copy to read x network address(es) (#36293)
+- bump semvar version to 13.3.2
+- Updated the native ticker for Hemi (#36218)
+- Enables Solana Devnet support (#36024)
+- Update: simplified network names for better readability - "Ethereum Mainnet" to "Ethereum", "Linea Mainnet" to "Linea", "Base (#35734)
+  Mainnet" to "Base", "Arbitrum One" to "Arbitrum", "Avalanche Network
+  C-Chain" to "Avalanche", "Binance Smart Chain" to "BNB Chain", "OP
+  Mainnet" to "OP", "Polygon Mainnet" to "Polygon", "Sei Mainnet" to
+  "Sei", and "zkSync Era Mainnet" to "zkSync Era" (#35734)
+- Bump version to 13.3.1 (#36119)
+- Refactored tabs to use design system library (#36036)
+- chore: Collect metrics for unavailable/degraded custom RPC (#36081)
+- chore: upgrade assets controllers to v75.2.0 (#36058)
+- Swap indicator in hardware wallet confirmation page (#35776)
+- Updated IoTeX network and IoTeX token logos (SVG) to the latest branding. (#35720)
+- Updated announcement banner's design. (#35858)
+- Update attributions
+- Update attributions
+- Update Attributions
+- Bump version to 13.2.3 (#35781)
+- chore: Bump ENS Snap (#35736)
+- Revert "Sync v13.3.0 with stable (#35674)
+- Sync v13.3.0 with stable (#35674)
+- chore: bump bridge controllers (#35596)
+- chore: migrate swap to bridge api toptokens (#35378)
+- chore: remove solana code fences (#35566)
+- chore: Update Ocap kernel packages and patch @endo/env-options (#35526)
+- Bitcoin v1 release. (#35404)
+- chore: migrate swap experience to BIP-44 selectors (#35220)
+- chore: replace deprecated button components (#34098)
+- chore: bump {`ens`,`gas-fee`,`notification-services`}-controller to {`^17`,`^24`,`^16`} (#35360)
+- chore: Bump Snaps packages (#35356)
+- Bumping version to 13.1.2
+- Bitcoin uses DIN endpoints (#35275)
+- chore: rm deprecated CrossChainSwaps events (#35127)
+- Bumping version to 13.1.1
+- Update Attributions
+- Update Attributions
+
+### Added
+
+- Auto turn on some settings when shield is active (#36343)
+- Bitcoin v1.3.0 release. (#36753)
+- Integrated Shield Entry Modal with SubscriptionController (#36588)
+  Upgraded SubscriptionController to `v1.0.0`.
+  Added `ShieldSubscriptionContext` to watch subscription
+  status
+- Added snap accounts link and account watcher option to multichain account list (#36717)
+- Added new label to BTC assets in the Tokens tab (#36574)
+- Added Bitcoin network support for Bridge functionality (#35597)
+- Enable BIP44 Bitcoin accounts (#36510)
+- Make token detail chart % change when changing time frames and hovering (#36664)
+- Add claims submission form (#35790)
+- Show user account instead of payer address in transaction shield (#36610)
+  fix translation date for crypto insufficient funding
+- Added "Learn More" link to private key list warning banner (#36531)
+- Added privacy mode feature for multichain accounts (#36524)
+- Add updates to the multichain introduction modal. (#36508)
+- Add UI loading states for backup & sync (#36348)
+- Notify users on home screen via banner when the selected RPC endpoint for an enabled network is degraded or unavailable, (#36259)
+  allowing endpoint to be quickly substituted
+- Added a new feature for saving multichain account name on Enter key press (#36454)
+- Updated pin extension ui (#36159)
+- Updated the headers for the Reveal SRP Password page, Review SRP, and Confirm SRP pages (#36420)
+- While loading tokens and balances on home screen, remove initial UI-blocking "connecting" spinner and display skeleton (#36045)
+  loaders instead
+- Added alerts to warn users when incoming tokens in a transaction are flagged as malicious or suspicious. (#36258)
+- Updated the MetaMetrics UI. (#36163)
+- Removed `secure-your-wallet` page and updated `backup-seed-phrase` pages (#36152)
+- N/A (#36445)
+- Added support for token scanning and cleared outdated URL scan cache (#35964)
+- Added swap button to activity tab empty state (#36319)
+- Updated the Import SRP UI (#36158)
+- Updated Login Modal UI (#36303)
+- Updated create-password form UI (#36154)
+- Adds dynamic fee information to the swaps quote card. (#36106)
+- Changed selected multichain account cell UI from a checkmark to a bar (#36367)
+- feat: updated alert system UI in Confirmations (#35761)
+- Fixes for Metamask Transaction Shield (#36284)
+- Presents a Permission confirmation view when a decoded permission exists on signTypedData metadata. Flask only. (#36054)
+- Subscription check out URL open new tab (#36161)
+- Changed the wallet details page title to include " / Accounts" suffix (#36307)
+- Adds EIP-7715 Readable Permissions to MetaMask flask, allowing dapps to call `wallet_requestExecutionPermissions` (#36230)
+- Pre-fill Swap tokens with default BIP-44 pairs from remote config (#36209)
+- Added Hyperliquid referral approval confirmation (#34999)
+- Add Priority tag to support in global menu if user subscribed (#35951)
+- Updates the Defi tab empty state with improved design (#36101)
+- Added a No MM Fee badge for relevant tokens in the bridge experience. (#36103)
+- Used the extensionReturnTxHashAsap param from remoteFeatureFlags for Smart Transactions (#36240)
+- Updated NFT tab empty state with improved design (#36134)
+- feat: add megaeth mainnet support (#36116)
+- Updated Activity tab empty state with improved design and theme-aware illustrations (#36138)
+- Added educational modal for Multichain Accounts feature introduction (#35907)
+- Adds MetaMask USD as a default toToken on Linea and Ethereum (#36100)
+- Added HEMI network (#36143)
+- feat: downgrade alert severity on account selected from warning to info (#35722)
+- feat: add new metadata to Wallet UX controllers (#35769)
+- Show account group name for Snaps when multichain accounts feature flag is enabled. (#35577)
+- feat: add new controller metadata to `SwapsController` (#35943)
+- Add support for gasless 7702 swaps (#35300)
+- feat: subscription payment options integration (#35929)
+- feat: add xdc network (#35805)
+- Added Shield plan page (#35350)
+- Added UI for showing subscription error states (#35874)
+- Encourage users to update to a new version of the extension if a deeplink can be verified, but is not found (#35714)
+- Add account syncing support for multichain accounts (#35299)
+- Removed metametrics consent screen for social logins in chromium browsers (#35583)
+- Add multichain account networks subtitle (#35862)
+- As this is behind a local feature gate, there are no public facing changes. (#35193)
+- feat: bump solana snap (#35511) (#35511)
+- feat: bump solana snap (#35511)
+- feat: adding utility method for routing to send page (#35505)
+- feat: capture amount metrics events (#35503)
+- feat: Implementing send metrics context and hooks (#35461)
+- feat: update SeedlessOnboarding controller to v3 (#35413)
+- feat: MetaMask Shield: Integrate Security Gateway (#35407)
+- feat: swaps-2834 adds bitcoin multichain bridge chain (#35377)
+- Added updates to wallet details page to handle multichain accounts (#35182)
+- feat: add end-to-end tests for Trezor ERC20 token creation and management (#35382)
+- feat: Add security alerts config option (#35396)
+
+### Fixed
+
+- Fixed issue with non-evm network assets not showing on first install unless the user changed networks manually (#36755)
+- N/A (#36741)
+- Update notifications enabled by default feature flag to control rollout (#36724)
+- Increase our security posture by locking down `cross_origin_opener_policy` to `same-origin-allow-popups` openers only. (#36500)
+- Show correct available token amount in shield subscription plan (#36494)
+- fix: UI review updates (#36523)
+- None (#36555)
+- Swap dest network should match src until user changes it (#36438)
+- Fixes a bug where a confirmation was showing up during solana account creation (error). (#36540)
+- Fixed the carousel flickering issue after all cards are closed. (#36533)
+- Update alert messages for address and token trust signals (#36517)
+- Only enables Solana Devnet when running on flask (#36520)
+- Updated token quantity formatting (#36511)
+- Update text in import srp success toast. (#36458)
+- Refactor send assets list fiat and token formatting (#36489)
+- Fix requesting additional wallet namespace request when there is an existing permission. (#36459)
+- Added Account API support for fetching account balances with improved performance and reliability for multi-account users (#36493)
+- Fixed an issue where adding a popular network via dapp/extension would incorrectly switch the network even when “All (#36497)
+  popular networks” was selected.
+- Fix network dropdown from showing current network (#36422)
+- Adjust styling on the Send Review screen (#36418)
+- Fixed SRP Import (#36491)
+- Fixed account balance display issue where only one account showed balance initially in account lists. (#36451)
+- Align avatar in the site cell with the account list in account connect. (#36392)
+- Use formatters for market cap (#36444)
+- Fixed DApp permissions page header to show "Edit Accounts" instead of "Connect with MetaMask" (#36421)
+- Fix solana connection after connecting with an evm account. (#36242)
+- Fixed UI behavior for address copy action (#36424)
+- Fix clearProductTour return type (#36428)
+- Fixed unwanted Solana Snap accounts appearing when BIP-44 multichain accounts feature is disabled (#36234)
+- Fixed headers UI inconsistencies for permission connect pages (#36412)
+- Fixed bug that caused Solana assets to open the wrong block explorer (#36394)
+- Updated hover state bugs in the header and popover styling (#36383)
+- fix: fixed memoisation issue (#35624)
+- Fixed the `AddressQRModal` component from breaking due to incorrect usage of the translation function. (#36396)
+- Fix padding around the edit icon in the `MultichainAccountsConnectPage`. (#36399)
+- Include accountAddress in swap tx submission params and show bridge activity list items for all accounts in (#36321)
+  accountGroup
+- Refactored network manager to use the `NetworkEnablementController` from core instead of a local controller. (#36150)
+- Fixed a bug that was causing a stray 0 to render on quotes page (#36368)
+- Update spacing but for account addresses (#36388)
+- Remove top padding for multichain pages (#36235)
+- Fixed account menu layout issues that caused multiple scroll bars and E2E test failures (#36260)
+- Missing SOL balance in Swap page (#36316)
+- Fixed a bug that was preventing Solana historical prices from showing (#36301)
+- Fixes account switching for solana dapps. (#36168)
+- Always show Swap as CTA button text (#36252)
+- Implemented "Remove account" for relevant accounts in the account group details page (#36286)
+- Fixed a bug that was showing reveal private key for non-entropy based accounts (#36300)
+- Fixes existing EVM permissions removed when a Solana Wallet Standard connection is rejected (#36283)
+- Fixed a bug that was preventing to show block explorer button for some networks (#36272)
+- Fix site cell connected account / network text (#36280)
+- Fix connection indicator for non-evm related dapps. (#36065)
+- Remove double loading indicator in the dapp connection flow. (#36226)
+- Display account group name in SIWE (#36225)
+- Fixes the tab alignment in bip44 dapp connection. (#36265)
+- Removes extra scroll bar during account connect when there are multiple accounts. (#36268)
+- Update edit account button copy. (#36269)
+- Fixed text truncation for very long account group names (#36233)
+- fix: remove double loading state in permission page button (#35887)
+- Removed warnings when adding HyperEVM as a custom network (#35609)
+- Fix connect now modal to support bip44 accounts. (#36064)
+- fix: clicking back arrow on confirmation header should cancel transaction (#36077)
+- fix(snaps): Align label margin on Snap UI form elements (#35794)
+- fix: display of network and token icon in confirmation header for native tokens other than ETH (#36062)
+- Fixed activity tab layout to show network selector above banner in empty state (#36136)
+- Fix total supply displayed value (#35959)
+- fix: in send flow cancel button on confirmation page should go back to send page (#36053)
+- Display correct avatar icons. (#36020)
+- Fixed retrieve `advancedGasFee` using the transaction’s `chainId` instead of the global network (#36110)
+- fix: send broken for native assets when triggered from asset detail page (#36038)
+- Fix issue with Snaps UI inputs of type number on Firefox (#36074)
+- fix: amount component related fixes in new send implementation (#36030)
+- Restore previous swap quote params when popup is reopened (#35958)
+- Fix display bip 44 edit account flow when choosing accounts. (#35865)
+- Minor UI details fixes in import SRP and global menu (#36004)
+- Fix the style of the account picker for pre-BIP44 wallet screen (#35932)
+- fix: language selector z-index update (#35950)
+- Fixed a bug where switching accounts could leave users on an unavailable network; the app now falls back to a popular network (#35841)
+  available in the new account group.
+- Fix balance display in multichain dapp connection flow. (#35866)
+- Unset Solana txAlert when quote refreshes to prevent inaccurate user warnings (#35777)
+- Updated petnames to use account group name (#35835)
+- Show checkbox in edit account page. (#35868)
+- fix: simplify transaction value calculation in useInsufficientBalanceAlerts hook (#35754)
+- fix: using new asset selectors for re-designed send flow (#35694)
+- fix(master sync): some conflicts not properly resolved during master sync
+- fix(unit test): update snapshot from multichain bridge quote card
+- fix(quote card test file): remove duplicate slippage
+
 ## [13.4.2]
 
 ### Fixed
@@ -706,7 +946,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - This changelog was split off with 12.22.0
 - All older changes can be found in [docs/CHANGELOG_older.md](https://github.com/MetaMask/metamask-extension/blob/main/docs/CHANGELOG_older.md)
 
-[Unreleased]: https://github.com/MetaMask/metamask-extension/compare/v13.4.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-extension/compare/v999.95.0...HEAD
+[999.95.0]: https://github.com/MetaMask/metamask-extension/compare/v13.4.2...v999.95.0
 [13.4.2]: https://github.com/MetaMask/metamask-extension/compare/v13.4.1...v13.4.2
 [13.4.1]: https://github.com/MetaMask/metamask-extension/compare/v13.4.0...v13.4.1
 [13.4.0]: https://github.com/MetaMask/metamask-extension/compare/v13.3.2...v13.4.0
