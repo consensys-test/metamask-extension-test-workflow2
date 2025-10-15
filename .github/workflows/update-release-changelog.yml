@@ -7,6 +7,8 @@ on:
     branches:
       - 'Version-v*'
       - 'release/*'
+    branches-ignore:
+      - 'release/*-Changelog'
 
 concurrency:
   group: update-release-changelog-${{ github.ref }}
@@ -25,4 +27,4 @@ jobs:
       github-tools-version: INFRA-2576-UpdateChangelogAutomatically
       previous-version-ref: null
     secrets:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
+      github-token: ${{ secrets.PR_TOKEN }}
