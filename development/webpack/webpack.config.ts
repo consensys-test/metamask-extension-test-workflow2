@@ -20,7 +20,6 @@ import discardFonts from 'postcss-discard-font-face';
 import type ReactRefreshPluginType from '@pmmmwh/react-refresh-webpack-plugin';
 import tailwindcss from 'tailwindcss';
 import { loadBuildTypesConfig } from '../lib/build-type';
-import { SelfInjectPlugin } from './utils/plugins/SelfInjectPlugin';
 import {
   type Manifest,
   collectEntries,
@@ -46,9 +45,6 @@ if (args.dryRun) {
 }
 
 // #region short circuit for unsupported build configurations
-if (args.lavamoat) {
-  throw new Error("The webpack build doesn't support LavaMoat yet. So sorry.");
-}
 if (args.manifest_version === 3) {
   throw new Error(
     "The webpack build doesn't support manifest_version version 3 yet. So sorry.",
@@ -104,12 +100,10 @@ const cache = args.cache
 // #region plugins
 const commitHash = isDevelopment ? getLatestCommit().hash() : null;
 const plugins: WebpackPluginInstance[] = [
-  new SelfInjectPlugin({ test: /^scripts\/inpage\.js$/u }),
   // HtmlBundlerPlugin treats HTML files as entry points
   new HtmlBundlerPlugin({
     preprocessorOptions: { useWith: false },
     minify: args.minify,
-    integrity: 'auto',
     test: /\.html$/u, // default is eta/html, we only want html
     data: {
       isTest: args.test,
@@ -179,6 +173,18 @@ const plugins: WebpackPluginInstance[] = [
     ],
   }),
 ];
+// MV2 requires self-injection
+if (MANIFEST_VERSION === 2) {
+  const { SelfInjectPlugin } = require('./utils/plugins/SelfInjectPlugin');
+  plugins.push(new SelfInjectPlugin({ test: /^scripts\/inpage\.js$/u }));
+}
+if (args.lavamoat) {
+  const {
+    lavamoatPlugin,
+    lavamoatUnsafeLayerPlugin,
+  } = require('./utils/plugins/LavamoatPlugin');
+  plugins.push(lavamoatPlugin(args), lavamoatUnsafeLayerPlugin);
+}
 // enable React Refresh in 'development' mode when `watch` is enabled
 if (__HMR_READY__ && isDevelopment && args.watch) {
   const ReactRefreshWebpackPlugin: typeof ReactRefreshPluginType = require('@pmmmwh/react-refresh-webpack-plugin');
@@ -212,8 +218,6 @@ const config = {
   devtool: args.devtool === 'none' ? false : args.devtool,
   output: {
     wasmLoading: 'fetch',
-    // required for `integrity` to work in the browser
-    crossOriginLoading: 'anonymous',
     // filenames for *initial* files (essentially JS entry points)
     filename: '[name].[contenthash].js',
     path: join(context, '..', 'dist'),
@@ -233,17 +237,40 @@ const config = {
     // Extensions added to the request when trying to find the file. The most
     // common extensions should be first to improve resolution performance.
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+    // TODO: Remove this workaround after upgrading to React 18
+    // WORKAROUND: Alias for React JSX runtime to handle ESM module resolution issues.
+    // This is needed because @metamask/design-system-react uses @radix-ui/react-slot,
+    // which is distributed as an ESM module (.mjs) that imports 'react/jsx-runtime'
+    // without the file extension. Webpack 5's strict ESM resolution requires fully
+    // specified imports, so we explicitly map these to the actual files.
+    //
+    // This issue only affects React 17. React 18+ properly exports jsx-runtime
+    // with correct ESM module resolution, so this workaround can be removed after upgrading.
+    //
+    // Related issues:
+    // - https://github.com/radix-ui/primitives/issues/3413
+    // - Fix example: https://github.com/xyflow/xyflow/issues/4683#issuecomment-2388049017
+    //
+    // Potential solutions until React 18 upgrade:
+    // 1. Current workaround: webpack aliases (what we're using)
+    // 2. @metamask/design-system-react could patch the Radix UI packages
+    // 3. @metamask/design-system-react could re-export components with a build step that fixes imports
+    alias: {
+      'react/jsx-runtime': require.resolve('react/jsx-runtime.js'),
+      'react/jsx-dev-runtime': require.resolve('react/jsx-dev-runtime.js'),
+    },
     // use `fallback` to redirect module requests when normal resolving fails,
     // good for polyfill-ing built-in node modules that aren't available in
     // the browser. The browser will first attempt to load these modules, if
     // it fails it will load the fallback.
     fallback: {
       // #region conditionally remove developer tooling
-      'react-devtools': isDevelopment
-        ? require.resolve('react-devtools')
+      // remove react-devtools-core unless METAMASK_REACT_REDUX_DEVTOOLS is enabled
+      'react-devtools-core': variables.get('METAMASK_REACT_REDUX_DEVTOOLS')
+        ? require.resolve('react-devtools-core')
         : false,
-      // remove remote-redux-devtools unless METAMASK_DEBUG is enabled
-      'remote-redux-devtools': variables.get('METAMASK_DEBUG')
+      // remove remote-redux-devtools unless METAMASK_REACT_REDUX_DEVTOOLS is enabled
+      'remote-redux-devtools': variables.get('METAMASK_REACT_REDUX_DEVTOOLS')
         ? require.resolve('remote-redux-devtools')
         : false,
       // #endregion conditionally remove developer tooling
@@ -445,6 +472,9 @@ const config = {
     aggregateTimeout: 5, // ms
     ignored: NODE_MODULES_RE, // avoid `fs.inotify.max_user_watches` issues
   },
+  ignoreWarnings: [
+    /the following module ids can't be controlled by policy and must be ignored at runtime/u,
+  ],
 } as const satisfies Configuration;
 
 export default config;

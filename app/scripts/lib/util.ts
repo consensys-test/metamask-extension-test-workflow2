@@ -241,6 +241,10 @@ export function getValidUrl(urlString: string): URL | null {
   }
 }
 
+export function isValidEmail(email: string): boolean {
+  return email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/iu) !== null;
+}
+
 export function isWebUrl(urlString: string): boolean {
   const url = getValidUrl(urlString);
 
@@ -257,7 +261,9 @@ export function isWebUrl(urlString: string): boolean {
  * @param metaMetricsId - The metametricsId to use for the event.
  * @returns Whether to emit the event or not.
  */
-export function shouldEmitDappViewedEvent(metaMetricsId: string): boolean {
+export function shouldEmitDappViewedEvent(
+  metaMetricsId: string | null,
+): boolean {
   const isFireFox = getPlatform() === PLATFORM_FIREFOX;
 
   if (metaMetricsId === null || isFireFox) {

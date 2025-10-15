@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom-v5-compat';
 import { useI18nContext } from '../../hooks/useI18nContext';
 import { NOTIFICATIONS_ROUTE } from '../../helpers/constants/routes';
 import {
@@ -57,7 +57,7 @@ function useNotificationAccounts() {
 // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31860
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export default function NotificationsSettings() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const t = useI18nContext();
 
@@ -96,11 +96,11 @@ export default function NotificationsSettings() {
           <ButtonIcon
             ariaLabel="Back"
             iconName={IconName.ArrowLeft}
-            size={ButtonIconSize.Sm}
+            size={ButtonIconSize.Md}
             onClick={() =>
               previousPage
-                ? history.push(previousPage)
-                : history.push(NOTIFICATIONS_ROUTE)
+                ? navigate(previousPage)
+                : navigate(NOTIFICATIONS_ROUTE)
             }
           />
         }

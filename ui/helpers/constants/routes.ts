@@ -15,6 +15,9 @@ export const GENERAL_ROUTE = '/settings/general';
 export const ADVANCED_ROUTE = '/settings/advanced';
 export const DEVELOPER_OPTIONS_ROUTE = '/settings/developer-options';
 export const EXPERIMENTAL_ROUTE = '/settings/experimental';
+export const TRANSACTION_SHIELD_ROUTE = '/settings/transaction-shield';
+export const TRANSACTION_SHIELD_CLAIM_ROUTE =
+  '/settings/transaction-shield/submit-claim';
 export const SECURITY_ROUTE = '/settings/security';
 export const ABOUT_US_ROUTE = '/settings/about-us';
 export const NETWORKS_ROUTE = '/settings/networks';
@@ -42,6 +45,16 @@ export const IMPORT_TOKENS_ROUTE = '/import-tokens';
 export const CONFIRM_IMPORT_TOKEN_ROUTE = '/confirm-import-token';
 export const CONFIRM_ADD_SUGGESTED_TOKEN_ROUTE = '/confirm-add-suggested-token';
 export const ACCOUNT_LIST_PAGE_ROUTE = '/account-list';
+export const MULTICHAIN_ACCOUNT_ADDRESS_LIST_PAGE_ROUTE =
+  '/multichain-account-address-list';
+export const MULTICHAIN_ACCOUNT_PRIVATE_KEY_LIST_PAGE_ROUTE =
+  '/multichain-account-private-key-list';
+export const ADD_WALLET_PAGE_ROUTE = '/add-wallet-page';
+export const MULTICHAIN_ACCOUNT_DETAILS_PAGE_ROUTE =
+  '/multichain-account-details';
+export const MULTICHAIN_WALLET_DETAILS_PAGE_ROUTE =
+  '/multichain-wallet-details-page';
+export const MULTICHAIN_SMART_ACCOUNT_PAGE_ROUTE = '/multichain-smart-account';
 export const NEW_ACCOUNT_ROUTE = '/new-account';
 export const ACCOUNT_DETAILS_ROUTE = '/account-details';
 export const ACCOUNT_DETAILS_QR_CODE_ROUTE = '/account-details/qr-code';
@@ -54,6 +67,9 @@ export const REMOTE_ROUTE_SETUP_DAILY_ALLOWANCE =
   '/remote/setup-daily-allowance';
 export const CONNECTIONS = '/connections';
 export const PERMISSIONS = '/permissions';
+export const GATOR_PERMISSIONS = '/gator-permissions';
+export const TOKEN_TRANSFER_ROUTE = '/gator-permissions/token-transfer';
+export const REVIEW_GATOR_PERMISSIONS_ROUTE = '/review-gator-permissions';
 export const REVIEW_PERMISSIONS = '/review-permissions';
 export const CONNECT_ROUTE = '/connect';
 export const CONNECT_CONFIRM_PERMISSIONS_ROUTE = '/confirm-permissions';
@@ -104,8 +120,6 @@ export const ONBOARDING_UNLOCK_ROUTE = '/onboarding/unlock';
 export const ONBOARDING_HELP_US_IMPROVE_ROUTE = '/onboarding/help-us-improve';
 export const ONBOARDING_IMPORT_WITH_SRP_ROUTE =
   '/onboarding/import-with-recovery-phrase';
-export const ONBOARDING_SECURE_YOUR_WALLET_ROUTE =
-  '/onboarding/secure-your-wallet';
 export const ONBOARDING_PRIVACY_SETTINGS_ROUTE = '/onboarding/privacy-settings';
 export const ONBOARDING_PIN_EXTENSION_ROUTE = '/onboarding/pin-extension';
 export const ONBOARDING_WELCOME_ROUTE = '/onboarding/welcome';
@@ -124,6 +138,8 @@ export const DEEP_LINK_ROUTE = '/link';
 export const WALLET_DETAILS_ROUTE = '/wallet-details/:id';
 export const DEFI_ROUTE = '/defi';
 
+export const SHIELD_PLAN_ROUTE = '/shield-plan';
+
 export const ROUTES = [
   { path: DEFAULT_ROUTE, label: 'Home', trackInAnalytics: true },
   { path: '', label: 'Home', trackInAnalytics: true }, // "" is an alias for the Home route
@@ -132,6 +148,21 @@ export const ROUTES = [
   {
     path: ACCOUNT_LIST_PAGE_ROUTE,
     label: 'Account List Page',
+    trackInAnalytics: true,
+  },
+  {
+    path: `${MULTICHAIN_ACCOUNT_DETAILS_PAGE_ROUTE}/:id`,
+    label: 'Account Details Page',
+    trackInAnalytics: true,
+  },
+  {
+    path: `${MULTICHAIN_WALLET_DETAILS_PAGE_ROUTE}/:id`,
+    label: 'Wallet Details Page',
+    trackInAnalytics: true,
+  },
+  {
+    path: `${MULTICHAIN_SMART_ACCOUNT_PAGE_ROUTE}/:address`,
+    label: 'Smart Account Page',
     trackInAnalytics: true,
   },
   {
@@ -515,11 +546,6 @@ export const ROUTES = [
     trackInAnalytics: false,
   },
   {
-    path: ONBOARDING_SECURE_YOUR_WALLET_ROUTE,
-    label: 'Onboarding Secure Your Wallet',
-    trackInAnalytics: false,
-  },
-  {
     path: ONBOARDING_REVIEW_SRP_ROUTE,
     label: 'Onboarding Review Recovery Phrase',
     trackInAnalytics: false,
@@ -618,6 +644,26 @@ export const ROUTES = [
     trackInAnalytics: false,
   },
   ///: END:ONLY_INCLUDE_IF
+  {
+    path: SHIELD_PLAN_ROUTE,
+    label: 'Shield Plan',
+    trackInAnalytics: false,
+  },
+  {
+    path: GATOR_PERMISSIONS,
+    label: 'Gator Permissions',
+    trackInAnalytics: false,
+  },
+  {
+    path: TOKEN_TRANSFER_ROUTE,
+    label: 'Gator Permissions Token Transfer',
+    trackInAnalytics: false,
+  },
+  {
+    path: `${REVIEW_GATOR_PERMISSIONS_ROUTE}/:chainId/:permissionGroupName`,
+    label: 'Review Gator Permissions',
+    trackInAnalytics: false,
+  },
 ] as const satisfies AppRoute[];
 
 export type AppRoutes = (typeof ROUTES)[number];

@@ -94,6 +94,8 @@ const scuttlingConfigBase = {
     history: '',
     isNaN: '',
     parseInt: '',
+    // Lodash
+    RegExp: '',
   },
 };
 
@@ -1028,9 +1030,9 @@ function setupBundlerDefaults(
     debug: true,
   });
 
-  // Ensure react-devtools is only included in dev builds
+  // Ensure react-devtools-core is only included in dev builds
   if (buildTarget !== BUILD_TARGETS.DEV) {
-    bundlerOpts.manualIgnore.push('react-devtools');
+    bundlerOpts.manualIgnore.push('react-devtools-core');
     bundlerOpts.manualIgnore.push('remote-redux-devtools');
   }
 
@@ -1311,7 +1313,8 @@ function renderHtmlFile({
     .replace('<script src="./scripts/load/ui.ts" defer></script>', scriptTags)
     .replace('<script src="./load-offscreen.js" defer></script>', scriptTags)
     .replace('../ui/css/index.scss', './index.css')
-    .replace('@lavamoat/snow/snow.prod.js', './scripts/snow.js');
+    .replace('@lavamoat/snow/snow.prod.js', './scripts/snow.js')
+    .replace('<script src="./scripts/load/bootstrap.ts" defer></script>', '');
   browserPlatforms.forEach((platform) => {
     const dest = `./dist/${platform}/${htmlName}.html`;
     // we dont have a way of creating async events atm

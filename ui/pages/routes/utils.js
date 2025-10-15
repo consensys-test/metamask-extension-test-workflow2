@@ -26,6 +26,12 @@ import {
   WALLET_DETAILS_ROUTE,
   ACCOUNT_DETAILS_ROUTE,
   ACCOUNT_DETAILS_QR_CODE_ROUTE,
+  MULTICHAIN_ACCOUNT_DETAILS_PAGE_ROUTE,
+  SHIELD_PLAN_ROUTE,
+  MULTICHAIN_WALLET_DETAILS_PAGE_ROUTE,
+  GATOR_PERMISSIONS,
+  TOKEN_TRANSFER_ROUTE,
+  REVIEW_GATOR_PERMISSIONS_ROUTE,
 } from '../../helpers/constants/routes';
 
 export function isConfirmTransactionRoute(pathname) {
@@ -185,6 +191,26 @@ export function hideAppHeader(props) {
     return true;
   }
 
+  const isStateTwoMultichainAccountDetailsPage = Boolean(
+    matchPath(location.pathname, {
+      path: MULTICHAIN_ACCOUNT_DETAILS_PAGE_ROUTE,
+      exact: false,
+    }),
+  );
+  if (isStateTwoMultichainAccountDetailsPage) {
+    return true;
+  }
+
+  const isStateTwoMultichainWalletDetailsPage = Boolean(
+    matchPath(location.pathname, {
+      path: MULTICHAIN_WALLET_DETAILS_PAGE_ROUTE,
+      exact: false,
+    }),
+  );
+  if (isStateTwoMultichainWalletDetailsPage) {
+    return true;
+  }
+
   const isWalletDetailsPage = Boolean(
     matchPath(location.pathname, {
       path: WALLET_DETAILS_ROUTE,
@@ -261,6 +287,50 @@ export function hideAppHeader(props) {
       exact: false,
     }),
   );
+
+  const isShieldPlanPage = Boolean(
+    matchPath(location.pathname, {
+      path: SHIELD_PLAN_ROUTE,
+      exact: false,
+    }),
+  );
+
+  if (isShieldPlanPage) {
+    return true;
+  }
+
+  const isGatorPermissionsPage = Boolean(
+    matchPath(location.pathname, {
+      path: GATOR_PERMISSIONS,
+      exact: false,
+    }),
+  );
+
+  if (isGatorPermissionsPage) {
+    return true;
+  }
+
+  const isGatorPermissionsTokenTransferPage = Boolean(
+    matchPath(location.pathname, {
+      path: TOKEN_TRANSFER_ROUTE,
+      exact: false,
+    }),
+  );
+
+  if (isGatorPermissionsTokenTransferPage) {
+    return true;
+  }
+
+  const isReviewGatorPermissionsPage = Boolean(
+    matchPath(location.pathname, {
+      path: REVIEW_GATOR_PERMISSIONS_ROUTE,
+      exact: false,
+    }),
+  );
+
+  if (isReviewGatorPermissionsPage) {
+    return true;
+  }
 
   return (
     isHandlingPermissionsRequest ||

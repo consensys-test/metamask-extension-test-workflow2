@@ -1,52 +1,97 @@
 import { useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { isSolanaChainId } from '@metamask/bridge-controller';
+import { useEffect, useState, useRef } from 'react';
 import {
-  getSelectedEvmInternalAccount,
-  getSelectedInternalAccount,
-} from '../../../selectors';
-import { getToChain } from '../../../ducks/bridge/selectors';
-import { getLastSelectedSolanaAccount } from '../../../selectors/multichain';
+  formatChainIdToCaip,
+  isSolanaChainId,
+  isBitcoinChainId,
+} from '@metamask/bridge-controller';
+import {
+  getAccountGroupNameByInternalAccount,
+  getToChain,
+} from '../../../ducks/bridge/selectors';
+import { getInternalAccountBySelectedAccountGroupAndCaip } from '../../../selectors/multichain-accounts/account-tree';
 import type { DestinationAccount } from '../prepare/types';
 
-export const useDestinationAccount = (isSwap: boolean) => {
+/**
+ * Hook to provide the default internal destination account for a bridge quote, and the state for the destination account picker modal
+ *
+ * @returns The default destination account and its setter, and the state for the
+ * destination account picker modal and its setter.
+ */
+export const useDestinationAccount = () => {
   const [selectedDestinationAccount, setSelectedDestinationAccount] =
     useState<DestinationAccount | null>(null);
-
-  const selectedEvmAccount = useSelector(getSelectedEvmInternalAccount);
-  const selectedSolanaAccount = useSelector(getLastSelectedSolanaAccount);
-  const currentlySelectedAccount = useSelector(getSelectedInternalAccount);
-
+  const [isDestinationAccountPickerOpen, setIsDestinationAccountPickerOpen] =
+    useState(false);
   const toChain = useSelector(getToChain);
-  const isDestinationSolana = toChain && isSolanaChainId(toChain.chainId);
+  const previousChainIdRef = useRef<string | undefined>(undefined);
 
-  // Auto-select most recently used account when toChain or account changes
+  // For bridges, use the appropriate account type for the destination chain
+  const defaultInternalDestinationAccount = useSelector((state) =>
+    toChain?.chainId
+      ? getInternalAccountBySelectedAccountGroupAndCaip(
+          state,
+          formatChainIdToCaip(toChain.chainId),
+        )
+      : null,
+  );
+
+  const displayName = useSelector((state) =>
+    getAccountGroupNameByInternalAccount(
+      state,
+      defaultInternalDestinationAccount,
+    ),
+  );
+
   useEffect(() => {
-    if (!toChain) {
-      // If no destination chain selected, clear the destination account
-      setSelectedDestinationAccount(null);
-      return;
-    }
+    const currentChainId = toChain?.chainId;
+    const previousChainId = previousChainIdRef.current;
 
-    // Use isSwap parameter to determine behavior
-    // This preserves legacy behavior when unified UI is disabled
-    if (isSwap) {
-      // For swaps, always use the currently selected account
-      setSelectedDestinationAccount(currentlySelectedAccount);
+    // Check if current and previous chains are non-EVM
+    const isPreviousNonEvm =
+      previousChainId &&
+      (isSolanaChainId(previousChainId) || isBitcoinChainId(previousChainId));
+    const isCurrentNonEvm =
+      currentChainId &&
+      (isSolanaChainId(currentChainId) || isBitcoinChainId(currentChainId));
+
+    // Check if previous chain was EVM (not non-EVM and exists)
+    const wasPreviousEvm = previousChainId && !isPreviousNonEvm;
+    // Check if current chain is EVM (not non-EVM and exists)
+    const isCurrentEvm = currentChainId && !isCurrentNonEvm;
+
+    // Open account picker when bridging between non-EVM and EVM chains
+    // Cases: non-EVM -> EVM, EVM -> non-EVM, or switching between different non-EVM chains
+    const shouldOpenPicker =
+      (isPreviousNonEvm && isCurrentEvm) || // non-EVM -> EVM
+      (wasPreviousEvm && isCurrentNonEvm) || // EVM -> non-EVM
+      (isPreviousNonEvm &&
+        isCurrentNonEvm &&
+        previousChainId !== currentChainId); // different non-EVM chains
+
+    if (shouldOpenPicker) {
+      setSelectedDestinationAccount(null);
+      setIsDestinationAccountPickerOpen(true);
     } else {
-      // For bridges, use the appropriate account type for the destination chain
       setSelectedDestinationAccount(
-        isDestinationSolana ? selectedSolanaAccount : selectedEvmAccount,
+        defaultInternalDestinationAccount
+          ? {
+              ...defaultInternalDestinationAccount,
+              isExternal: false,
+              displayName: displayName ?? '',
+            }
+          : null,
       );
     }
-  }, [
-    isDestinationSolana,
-    selectedSolanaAccount,
-    selectedEvmAccount,
-    toChain,
-    currentlySelectedAccount,
-    isSwap,
-  ]);
 
-  return { selectedDestinationAccount, setSelectedDestinationAccount };
+    // Update the ref for next comparison
+    previousChainIdRef.current = currentChainId;
+  }, [defaultInternalDestinationAccount, displayName, toChain?.chainId]);
+
+  return {
+    selectedDestinationAccount,
+    setSelectedDestinationAccount,
+    isDestinationAccountPickerOpen,
+    setIsDestinationAccountPickerOpen,
+  };
 };

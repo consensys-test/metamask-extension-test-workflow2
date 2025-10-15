@@ -49,18 +49,31 @@ import {
 import { InterfaceState } from '@metamask/snaps-sdk';
 import { KeyringObject, KeyringTypes } from '@metamask/keyring-controller';
 import type { NotificationServicesController } from '@metamask/notification-services-controller';
-import {
-  USER_STORAGE_FEATURE_NAMES,
-  UserProfileLineage,
-} from '@metamask/profile-sync-controller/sdk';
-import { Patch } from 'immer';
+import { UserProfileLineage } from '@metamask/profile-sync-controller/sdk';
+import { Immer, Patch } from 'immer';
 ///: BEGIN:ONLY_INCLUDE_IF(multichain)
 import { HandlerType } from '@metamask/snaps-utils';
 ///: END:ONLY_INCLUDE_IF
+import {
+  USER_STORAGE_GROUPS_FEATURE_KEY,
+  USER_STORAGE_WALLETS_FEATURE_KEY,
+} from '@metamask/account-tree-controller';
 import { BACKUPANDSYNC_FEATURES } from '@metamask/profile-sync-controller/user-storage';
 import { isInternalAccountInPermittedAccountIds } from '@metamask/chain-agnostic-permission';
 import { AuthConnection } from '@metamask/seedless-onboarding-controller';
-import { AccountGroupId } from '@metamask/account-api';
+import { AccountGroupId, AccountWalletId } from '@metamask/account-api';
+import { SerializedUR } from '@metamask/eth-qr-keyring';
+import {
+  BillingPortalResponse,
+  GetCryptoApproveTransactionRequest,
+  GetCryptoApproveTransactionResponse,
+  PaymentType,
+  PricingResponse,
+  ProductType,
+  RecurringInterval,
+  Subscription,
+  UpdatePaymentMethodOpts,
+} from '@metamask/subscription-controller';
 import { captureException } from '../../shared/lib/sentry';
 import { switchDirection } from '../../shared/lib/switch-direction';
 import {
@@ -153,6 +166,8 @@ import {
   getUseSmartAccount,
 } from '../pages/confirmations/selectors/preferences';
 import { setShowNewSrpAddedToast } from '../components/app/toast-master/utils';
+import { stripWalletTypePrefixFromWalletId } from '../hooks/multichain-accounts/utils';
+import type { NetworkConnectionBanner } from '../../shared/constants/app-state';
 import * as actionConstants from './actionConstants';
 
 import {
@@ -300,7 +315,11 @@ export function createNewVaultAndSyncWithSocial(
         seedPhrase,
         primaryKeyring.metadata.id,
       );
+
       dispatch(hideWarning());
+      // force update the state after creating the vault
+      await forceUpdateMetamaskState(dispatch);
+
       return seedPhrase;
     } catch (error) {
       dispatch(displayWarning(error));
@@ -310,6 +329,186 @@ export function createNewVaultAndSyncWithSocial(
         throw error;
       }
     }
+  };
+}
+
+/**
+ * Fetches user subscriptions.
+ *
+ * @returns The subscriptions.
+ */
+export function getSubscriptions(): ThunkAction<
+  Subscription[],
+  MetaMaskReduxState,
+  unknown,
+  AnyAction
+> {
+  return async (_dispatch: MetaMaskReduxDispatch) => {
+    return await submitRequestToBackground('getSubscriptions');
+  };
+}
+
+/**
+ * Fetches the subscription pricing.
+ *
+ * @returns The subscription pricing.
+ */
+export function getSubscriptionPricing(): ThunkAction<
+  PricingResponse,
+  MetaMaskReduxState,
+  unknown,
+  AnyAction
+> {
+  return async (_dispatch: MetaMaskReduxDispatch) => {
+    return await submitRequestToBackground<PricingResponse>(
+      'getSubscriptionPricing',
+    );
+  };
+}
+
+/**
+ * Get crypto total amount needed for a subscription.
+ *
+ * @param params - The parameters.
+ * @param params.price - The price.
+ * @param params.tokenPaymentInfo - The token payment info.
+ * @returns The subscription crypto approval amount.
+ */
+export async function getSubscriptionCryptoApprovalAmount(
+  params: GetCryptoApproveTransactionRequest,
+): Promise<GetCryptoApproveTransactionResponse> {
+  return await submitRequestToBackground<string>(
+    'getSubscriptionCryptoApprovalAmount',
+    [params],
+  );
+}
+
+/**
+ * Starts a subscription with a card.
+ *
+ * @param params - The parameters.
+ * @param params.products - The list of products.
+ * @param params.isTrialRequested - Is trial requested.
+ * @param params.recurringInterval - The recurring interval.
+ * @returns The subscription response.
+ */
+export function startSubscriptionWithCard(params: {
+  products: ProductType[];
+  isTrialRequested: boolean;
+  recurringInterval: RecurringInterval;
+}): ThunkAction<Subscription[], MetaMaskReduxState, unknown, AnyAction> {
+  return async (_dispatch: MetaMaskReduxDispatch) => {
+    try {
+      const currentTab = await global.platform.currentTab();
+      const subscriptions = await submitRequestToBackground<Subscription[]>(
+        'startSubscriptionWithCard',
+        [params, currentTab?.id],
+      );
+
+      return subscriptions;
+    } catch (error) {
+      console.error('[startSubscriptionWithCard] error', error);
+      throw error;
+    }
+  };
+}
+
+export function updateSubscriptionCardPaymentMethod(params: {
+  paymentType: Extract<PaymentType, 'card'>;
+  subscriptionId: string;
+  recurringInterval: RecurringInterval;
+}): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
+  return async (_dispatch: MetaMaskReduxDispatch) => {
+    const currentTab = await global.platform.currentTab();
+    const subscriptions = await submitRequestToBackground(
+      'updateSubscriptionCardPaymentMethod',
+      [params, currentTab?.id],
+    );
+
+    return subscriptions;
+  };
+}
+
+export function startSubscriptionWithCrypto(params: {
+  products: ProductType[];
+  isTrialRequested: boolean;
+  recurringInterval: RecurringInterval;
+  billingCycles: number;
+  chainId: Hex;
+  payerAddress: Hex;
+  tokenSymbol: string;
+  rawTransaction: Hex;
+}): ThunkAction<Subscription[], MetaMaskReduxState, unknown, AnyAction> {
+  return async (_dispatch: MetaMaskReduxDispatch) => {
+    return await submitRequestToBackground<Subscription[]>(
+      'startSubscriptionWithCrypto',
+      [params],
+    );
+  };
+}
+
+export function updateSubscriptionCryptoPaymentMethod(
+  params: Extract<UpdatePaymentMethodOpts, { paymentType: 'crypto' }>,
+): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
+  return async (_dispatch: MetaMaskReduxDispatch) => {
+    await submitRequestToBackground('updateSubscriptionCryptoPaymentMethod', [
+      params,
+    ]);
+  };
+}
+
+export function cancelSubscription(params: {
+  subscriptionId: string;
+}): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
+  return async (_dispatch: MetaMaskReduxDispatch) => {
+    await submitRequestToBackground('cancelSubscription', [params]);
+  };
+}
+
+export function unCancelSubscription(params: {
+  subscriptionId: string;
+}): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
+  return async (_dispatch: MetaMaskReduxDispatch) => {
+    await submitRequestToBackground('unCancelSubscription', [params]);
+  };
+}
+
+export function getSubscriptionBillingPortalUrl(): ThunkAction<
+  BillingPortalResponse,
+  MetaMaskReduxState,
+  unknown,
+  AnyAction
+> {
+  return async (_dispatch: MetaMaskReduxDispatch) => {
+    const res = await submitRequestToBackground<BillingPortalResponse>(
+      'getSubscriptionBillingPortalUrl',
+      [],
+    );
+    return res;
+  };
+}
+
+export function setShowShieldEntryModalOnce(
+  payload: boolean | null,
+): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
+  return async (dispatch: MetaMaskReduxDispatch) => {
+    try {
+      await submitRequestToBackground('setShowShieldEntryModalOnce', [payload]);
+      dispatch(setShowShieldEntryModalOnceAction(payload));
+    } catch (error) {
+      log.error('[setShowShieldEntryModalOnce] error', error);
+      dispatch(displayWarning(error));
+      throw error;
+    }
+  };
+}
+
+export function setShowShieldEntryModalOnceAction(
+  payload: boolean | null,
+): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
+  return {
+    type: actionConstants.SET_SHOW_SHIELD_ENTRY_MODAL_ONCE,
+    payload,
   };
 }
 
@@ -329,6 +528,10 @@ export function restoreSocialBackupAndGetSeedPhrase(
         'restoreSocialBackupAndGetSeedPhrase',
         [password],
       );
+
+      // sync marketing consent with metametrics
+      const marketingConsent = await getMarketingConsent();
+      dispatch(setDataCollectionForMarketing(marketingConsent));
 
       dispatch(hideWarning());
       await forceUpdateMetamaskState(dispatch);
@@ -595,6 +798,10 @@ export function createNewVaultAndGetSeedPhrase(
     try {
       await createNewVault(password);
       const seedPhrase = await getSeedPhrase(password);
+
+      // force update the state after creating the vault
+      await forceUpdateMetamaskState(dispatch);
+
       return seedPhrase;
     } catch (error) {
       dispatch(displayWarning(error));
@@ -2168,18 +2375,15 @@ const backgroundSetLocked = (): Promise<void> => {
   });
 };
 
-export function lockMetamask(): ThunkAction<
-  void,
-  MetaMaskReduxState,
-  unknown,
-  AnyAction
-> {
+export function lockMetamask(
+  message?: string,
+): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
   log.debug(`background.setLocked`);
 
   // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31879
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   return (dispatch: MetaMaskReduxDispatch) => {
-    dispatch(showLoadingIndication());
+    dispatch(showLoadingIndication(message));
 
     return backgroundSetLocked()
       .then(() => forceUpdateMetamaskState(dispatch))
@@ -2225,6 +2429,59 @@ export function setSelectedMultichainAccount(
       logErrorWithMessage(error);
     } finally {
       dispatch(hideLoadingIndication());
+    }
+  };
+}
+
+/**
+ * Create a new multichain account.
+ *
+ * @param walletId - ID of a wallet.
+ */
+export function createNextMultichainAccountGroup(
+  walletId: AccountWalletId,
+): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
+  return async (dispatch: MetaMaskReduxDispatch) => {
+    log.debug(`background.createNextMultichainAccountGroup`);
+    try {
+      const walletIdWithoutTypePrefix =
+        stripWalletTypePrefixFromWalletId(walletId);
+      await submitRequestToBackground('createNextMultichainAccountGroup', [
+        walletIdWithoutTypePrefix,
+      ]);
+      // Forcing update of the state speeds up the UI update process
+      // and makes UX better
+      await forceUpdateMetamaskState(dispatch);
+    } catch (error) {
+      logErrorWithMessage(error);
+    }
+  };
+}
+
+/**
+ * Set a new account group name (rename a multichain account).
+ *
+ * @param accountGroupId - ID of a multichain account group.
+ * @param newAccountName - New name for a multichain account.
+ */
+export function setAccountGroupName(
+  accountGroupId: AccountGroupId,
+  newAccountName: string,
+): ThunkAction<Promise<boolean>, MetaMaskReduxState, unknown, AnyAction> {
+  return async (dispatch: MetaMaskReduxDispatch) => {
+    log.debug(`background.setAccountGroupName`);
+    try {
+      await submitRequestToBackground('setAccountGroupName', [
+        accountGroupId,
+        newAccountName,
+      ]);
+      // Forcing update of the state speeds up the UI update process
+      // and makes UX better
+      await forceUpdateMetamaskState(dispatch);
+      return true;
+    } catch (error) {
+      logErrorWithMessage(error);
+      return false;
     }
   };
 }
@@ -2517,6 +2774,12 @@ export function setShowSupportDataConsentModal(show: boolean) {
     payload: show,
   };
 }
+
+export function clearProductTour() {
+  return async () => {
+    return submitRequestToBackground('setProductTour', ['']);
+  };
+}
 export function addToken(
   {
     address,
@@ -2646,6 +2909,17 @@ export async function getBalancesInSingleCall(
     selectedAddress,
     tokensToDetect,
     networkClientId,
+  ]);
+}
+
+/**
+ * Find networkClientId for the chainId passed.
+ *
+ * @param chainId - chainId of the network
+ */
+export async function findNetworkClientIdByChainId(chainId: string): string {
+  return await submitRequestToBackground('findNetworkClientIdByChainId', [
+    chainId,
   ]);
 }
 
@@ -2851,15 +3125,15 @@ export async function getNFTContractInfo(
 // eslint-disable-next-line @typescript-eslint/naming-convention
 type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
 
+export type TokenStandAndDetails = Awaited<
+  ReturnType<AssetsContractController['getTokenStandardAndDetails']>
+> & { balance?: string };
+
 export async function getTokenStandardAndDetails(
   address: string,
   userAddress?: string,
   tokenId?: string,
-): Promise<
-  Awaited<
-    ReturnType<AssetsContractController['getTokenStandardAndDetails']>
-  > & { balance?: string }
-> {
+): Promise<TokenStandAndDetails> {
   return await submitRequestToBackground('getTokenStandardAndDetails', [
     address,
     userAddress,
@@ -2872,11 +3146,7 @@ export async function getTokenStandardAndDetailsByChain(
   userAddress?: string,
   tokenId?: string,
   chainId?: string,
-): Promise<
-  Awaited<
-    ReturnType<AssetsContractController['getTokenStandardAndDetails']>
-  > & { balance?: string }
-> {
+): Promise<TokenStandAndDetails> {
   return await submitRequestToBackground('getTokenStandardAndDetailsByChain', [
     address,
     userAddress,
@@ -3959,6 +4229,9 @@ export function resetOnboarding(): ThunkAction<
       if (isSocialLoginFlow) {
         await dispatch(resetOAuthLoginState());
       }
+
+      // reset metametrics optin status
+      dispatch(setParticipateInMetaMetrics(null));
     } catch (err) {
       console.error(err);
     }
@@ -4085,6 +4358,44 @@ export function setDataCollectionForMarketing(
   };
 }
 
+/**
+ * Sets marketing consent with OAuth service for social login users.
+ *
+ * @param hasEmailMarketingConsent - Boolean value for marketing consent
+ */
+export function setMarketingConsent(
+  hasEmailMarketingConsent: boolean,
+): ThunkAction<Promise<boolean>, MetaMaskReduxState, unknown, AnyAction> {
+  return async () => {
+    try {
+      const res = await submitRequestToBackground('setMarketingConsent', [
+        hasEmailMarketingConsent,
+      ]);
+      return Boolean(res);
+    } catch (error) {
+      logErrorWithMessage(getErrorMessage(error));
+      return false;
+    }
+  };
+}
+
+/**
+ * Gets marketing consent with OAuth service for social login users.
+ */
+export async function getMarketingConsent() {
+  try {
+    const res = await submitRequestToBackground('getMarketingConsent');
+    return Boolean(res);
+  } catch (error) {
+    logErrorWithMessage(getErrorMessage(error));
+    return false;
+  }
+}
+
+/**
+ * @deprecated Use setAvatarType instead
+ * @param val - Boolean value for blockie preference
+ */
 export function setUseBlockie(
   val: boolean,
 ): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
@@ -4098,6 +4409,10 @@ export function setUseBlockie(
       }
     });
   };
+}
+
+export function setAvatarType(value: string) {
+  return setPreference('avatarType', value);
 }
 
 export function setUsePhishDetect(
@@ -4228,12 +4543,16 @@ export function setUseCurrencyRateCheck(
 // MultichainAssetsRatesController
 export function fetchHistoricalPricesForAsset(
   address: CaipAssetType,
+  internalAccount: InternalAccount,
 ): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
   // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31879
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   return async (dispatch: MetaMaskReduxDispatch) => {
     log.debug(`background.fetchHistoricalPricesForAsset`);
-    await submitRequestToBackground('fetchHistoricalPricesForAsset', [address]);
+    await submitRequestToBackground('fetchHistoricalPricesForAsset', [
+      address,
+      internalAccount,
+    ]);
     await forceUpdateMetamaskState(dispatch);
   };
 }
@@ -4831,22 +5150,33 @@ export function updateAccountsList(
  * This method updates the enabledNetworkMap to mark specified networks as enabled.
  * It can handle both a single chain ID or an array of chain IDs.
  *
- * @deprecated - this unsafely sets the EnabledNetworkMap,
- * - we want to have better control on how we enable networks (either single network or all, not in between)
- * Please use controller-actions/network-order-controller.ts actions
- * @param chainIds - A single chainId (e.g. 'eip155:1') or an array of chain IDs
- * to be enabled. All other networks will be implicitly disabled.
- * @param networkId - The CAIP-2 chain ID of the currently selected network
+ * Sets the enabled networks in the controller state.
+ * Only a single network or all networks can be enabled at once, not an arbitrary subset.
+ * Uses actions from controller-actions/network-order-controller.ts for better control.
+ *
+ * @param chainId - A single chainId (e.g. 'eip155:1') to be enabled. All other networks will be implicitly disabled.
  */
 export function setEnabledNetworks(
-  chainIds: string[],
-  networkId: CaipNamespace,
+  chainId: string,
 ): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
   return async () => {
-    await submitRequestToBackground('setEnabledNetworks', [
-      chainIds,
-      networkId,
-    ]);
+    await submitRequestToBackground('setEnabledNetworks', [chainId]);
+  };
+}
+
+/**
+ * Enables all popular networks in the controller state.
+ *
+ * @returns callback to enable all popular networks.
+ */
+export function setEnabledAllPopularNetworks(): ThunkAction<
+  void,
+  MetaMaskReduxState,
+  unknown,
+  AnyAction
+> {
+  return async () => {
+    await submitRequestToBackground('setEnabledAllPopularNetworks');
   };
 }
 
@@ -5273,19 +5603,22 @@ export function setNextNonce(nextNonce: string): PayloadAction<string> {
  * accidental usage of a stale nonce as the call to getNextNonce only works for
  * the currently selected address.
  *
- * @param address - address for which nonce lock shouuld be obtained.
+ * @param address - address for which nonce lock should be obtained.
+ * @param networkClientId - networkClientId for network for which nonce lock is needed.
  * @returns
  */
 export function getNextNonce(
   address,
+  networkClientId,
 ): ThunkAction<Promise<string>, MetaMaskReduxState, unknown, AnyAction> {
   return async (dispatch, getState) => {
-    const networkClientId = getSelectedNetworkClientId(getState());
+    const networkClientIdValue =
+      networkClientId ?? getSelectedNetworkClientId(getState());
     let nextNonce;
     try {
       nextNonce = await submitRequestToBackground<string>('getNextNonce', [
         address,
-        networkClientId,
+        networkClientIdValue,
       ]);
     } catch (error) {
       dispatch(displayWarning(error));
@@ -5510,11 +5843,11 @@ export async function tokenListStopPollingByPollingToken(pollingToken: string) {
 }
 
 export async function tokenBalancesStartPolling(
-  chainId: string,
+  chainIds: string[],
 ): Promise<string> {
   const pollingToken = await submitRequestToBackground(
     'tokenBalancesStartPolling',
-    [{ chainId }],
+    [{ chainIds }],
   );
   await addPollingTokenToAppState(pollingToken);
   return pollingToken;
@@ -5527,6 +5860,15 @@ export async function tokenBalancesStopPollingByPollingToken(
     pollingToken,
   ]);
   await removePollingTokenFromAppState(pollingToken);
+}
+
+export async function updateBalancesFoAccounts(
+  chainIds: string[],
+  queryAllAccounts: boolean,
+): Promise<void> {
+  await submitRequestToBackground('updateBalances', [
+    { chainIds, queryAllAccounts },
+  ]);
 }
 
 /**
@@ -6016,6 +6358,16 @@ export function hideNetworkBanner() {
   return submitRequestToBackground('setShowNetworkBanner', [false]);
 }
 
+export function updateNetworkConnectionBanner(
+  networkConnectionBanner: NetworkConnectionBanner,
+): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
+  return async () => {
+    await submitRequestToBackground('updateNetworkConnectionBanner', [
+      networkConnectionBanner,
+    ]);
+  };
+}
+
 /**
  * Sends the background state the networkClientId and domain upon network switch
  *
@@ -6100,46 +6452,23 @@ export function setUseTransactionSimulations(val: boolean): void {
 }
 
 // QR Hardware Wallets
-export async function submitQRHardwareCryptoHDKey(cbor: Hex) {
-  await submitRequestToBackground('submitQRHardwareCryptoHDKey', [cbor]);
-}
 
-export async function submitQRHardwareCryptoAccount(cbor: Hex) {
-  await submitRequestToBackground('submitQRHardwareCryptoAccount', [cbor]);
-}
-
-export function cancelSyncQRHardware(): ThunkAction<
-  void,
-  MetaMaskReduxState,
-  unknown,
-  AnyAction
-> {
-  // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31879
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  return async (dispatch: MetaMaskReduxDispatch) => {
-    dispatch(hideLoadingIndication());
-    await submitRequestToBackground('cancelSyncQRHardware');
+export function completeQrCodeScan(
+  scanResult: SerializedUR,
+): ThunkAction<void, MetaMaskReduxState, unknown, AnyAction> {
+  return async () => {
+    await submitRequestToBackground('completeQrCodeScan', [scanResult]);
   };
 }
 
-export async function submitQRHardwareSignature(requestId: string, cbor: Hex) {
-  await submitRequestToBackground('submitQRHardwareSignature', [
-    requestId,
-    cbor,
-  ]);
-}
-
-export function cancelQRHardwareSignRequest(): ThunkAction<
+export function cancelQrCodeScan(): ThunkAction<
   void,
   MetaMaskReduxState,
   unknown,
   AnyAction
 > {
-  // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31879
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  return async (dispatch: MetaMaskReduxDispatch) => {
-    dispatch(hideLoadingIndication());
-    await submitRequestToBackground('cancelQRHardwareSignRequest');
+  return async () => {
+    await submitRequestToBackground('cancelQrCodeScan');
   };
 }
 
@@ -6211,6 +6540,16 @@ export async function getNetworkConfigurationByNetworkClientId(
     console.error(error);
   }
   return networkConfiguration;
+}
+
+/**
+ * Gathers metadata (primarily connectivity status) about the globally selected
+ * network as well as each enabled network and persists it to state.
+ */
+export function lookupSelectedNetworks() {
+  return async () => {
+    await submitRequestToBackground('lookupSelectedNetworks');
+  };
 }
 
 export function updateProposedNames(
@@ -6591,14 +6930,14 @@ export function deleteNotificationsById(
 }
 
 /**
- * Synchronizes accounts data with user storage between devices.
+ * Synchronizes account tree data with user storage between devices.
  *
  * This function sends a request to the background script to sync accounts data and update the state accordingly.
  * If the operation encounters an error, it logs the error message and rethrows the error to ensure it is handled appropriately.
  *
  * @returns A thunk action that, when dispatched, attempts to synchronize accounts data with user storage between devices.
  */
-export function syncInternalAccountsWithUserStorage(): ThunkAction<
+export function syncAccountTreeWithUserStorage(): ThunkAction<
   void,
   MetaMaskReduxState,
   unknown,
@@ -6609,68 +6948,12 @@ export function syncInternalAccountsWithUserStorage(): ThunkAction<
   return async () => {
     try {
       const response = await submitRequestToBackground(
-        'syncInternalAccountsWithUserStorage',
+        'syncAccountTreeWithUserStorage',
       );
       return response;
     } catch (error) {
       logErrorWithMessage(error);
       throw error;
-    }
-  };
-}
-
-/**
- * "Locks" account syncing by setting the necessary flags in UserStorageController.
- * This is used to temporarily prevent account syncing from listening to accounts being changed, and the downward sync to happen.
- *
- * @returns
- */
-export function lockAccountSyncing(): ThunkAction<
-  void,
-  MetaMaskReduxState,
-  unknown,
-  AnyAction
-> {
-  return async () => {
-    try {
-      await submitRequestToBackground(
-        'setIsAccountSyncingReadyToBeDispatched',
-        [false],
-      );
-      await submitRequestToBackground('setHasAccountSyncingSyncedAtLeastOnce', [
-        false,
-      ]);
-    } catch (error) {
-      logErrorWithMessage(error);
-      throw error;
-    }
-  };
-}
-
-/**
- * "Unlocks" account syncing by setting the necessary flags in UserStorageController.
- * This is used to resume account syncing after it has been locked.
- * This will trigger a downward sync if this is called after a lockAccountSyncing call.
- *
- * @returns
- */
-export function unlockAccountSyncing(): ThunkAction<
-  void,
-  MetaMaskReduxState,
-  unknown,
-  AnyAction
-> {
-  return async () => {
-    try {
-      await submitRequestToBackground('setHasAccountSyncingSyncedAtLeastOnce', [
-        true,
-      ]);
-      return await submitRequestToBackground(
-        'setIsAccountSyncingReadyToBeDispatched',
-        [true],
-      );
-    } catch (error) {
-      return getErrorMessage(error);
     }
   };
 }
@@ -6693,11 +6976,14 @@ export function deleteAccountSyncingDataFromUserStorage(): ThunkAction<
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   return async () => {
     try {
-      const response = await submitRequestToBackground(
-        'deleteAccountSyncingDataFromUserStorage',
-        [USER_STORAGE_FEATURE_NAMES.accounts],
-      );
-      return response;
+      await Promise.all([
+        submitRequestToBackground('deleteAccountSyncingDataFromUserStorage', [
+          USER_STORAGE_GROUPS_FEATURE_KEY,
+        ]),
+        submitRequestToBackground('deleteAccountSyncingDataFromUserStorage', [
+          USER_STORAGE_WALLETS_FEATURE_KEY,
+        ]),
+      ]);
     } catch (error) {
       logErrorWithMessage(error);
       throw error;
@@ -6883,6 +7169,14 @@ export function setConfirmationAdvancedDetailsOpen(value: boolean) {
   return setPreference('showConfirmationAdvancedDetails', value);
 }
 
+export function setMultichainAccountsIntroModalShown(value: boolean) {
+  return async () => {
+    await submitRequestToBackground('setHasShownMultichainAccountsIntroModal', [
+      value,
+    ]);
+  };
+}
+
 export async function getNextAvailableAccountName(
   keyring?: KeyringTypes,
 ): Promise<string> {
@@ -6925,6 +7219,11 @@ export async function multichainUpdateTransactions(
     accountId,
   ]);
 }
+
+export async function alignMultichainWallets(): Promise<void> {
+  return await submitRequestToBackground<void>('alignMultichainWallets', []);
+}
+
 ///: END:ONLY_INCLUDE_IF
 
 export async function getLastInteractedConfirmationInfo(): Promise<
@@ -6958,34 +7257,14 @@ export async function endBackgroundTrace(request: EndTraceRequest) {
   ]);
 }
 
-/**
- * Apply the state patches from the background.
- * Intentionally not using immer as a temporary measure to avoid
- * freezing the resulting state and requiring further fixes
- * to remove direct state mutations.
- *
- * @param oldState - The current state.
- * @param patches - The patches to apply.
- * Only supports 'replace' operations with a single path element.
- * @returns The new state.
- */
 function applyPatches(
   oldState: Record<string, unknown>,
   patches: Patch[],
 ): Record<string, unknown> {
-  const newState = { ...oldState };
+  const immer = new Immer();
+  immer.setAutoFreeze(false);
 
-  for (const patch of patches) {
-    const { op, path, value } = patch;
-
-    if (op === 'replace') {
-      newState[path[0]] = value;
-    } else {
-      throw new Error(`Unsupported patch operation: ${op}`);
-    }
-  }
-
-  return newState;
+  return immer.applyPatches(oldState, patches);
 }
 
 ///: BEGIN:ONLY_INCLUDE_IF(multichain)
@@ -7097,6 +7376,20 @@ export async function openUpdateTabAndReload() {
   return await submitRequestToBackground('openUpdateTabAndReload');
 }
 
+export async function getERC1155BalanceOf(
+  userAddress: string,
+  tokenAddress: string,
+  tokenId: string,
+  networkClientId: string,
+): Promise<string> {
+  return await submitRequestToBackground<string>('getERC1155BalanceOf', [
+    userAddress,
+    tokenAddress,
+    tokenId,
+    networkClientId,
+  ]);
+}
+
 export async function applyTransactionContainersExisting(
   transactionId: string,
   containerTypes: TransactionContainerType[],
@@ -7105,4 +7398,18 @@ export async function applyTransactionContainersExisting(
     'applyTransactionContainersExisting',
     [transactionId, containerTypes],
   );
+}
+
+export async function getLayer1GasFeeValue({
+  chainId,
+  networkClientId,
+  transactionParams,
+}: {
+  transactionParams: TransactionParams;
+  chainId?: Hex;
+  networkClientId?: NetworkClientId;
+}) {
+  return await submitRequestToBackground('getLayer1GasFee', [
+    { chainId, networkClientId, transactionParams },
+  ]);
 }

@@ -5,6 +5,7 @@ ignores:
   #
 
   - '@lavamoat/snow'
+  - '@lavamoat/webpack'
   - '@lavamoat/allow-scripts'
   - '@babel/runtime'
   - '@fortawesome/fontawesome-free'
@@ -27,6 +28,7 @@ ignores:
   - '@metamask/test-dapp'
   - '@metamask/test-dapp-multichain'
   - '@metamask/test-dapp-solana'
+  - '@metamask/snap-simple-keyring-site'
   - '@metamask/design-tokens' # Only imported in index.css
   - '@tsconfig/node22' # required dynamically by TS, used in tsconfig.json
   - '@sentry/cli' # invoked as `sentry-cli`
@@ -49,14 +51,11 @@ ignores:
   # storybook
   - '@storybook/cli'
   - '@storybook/core'
-  - '@storybook/addon-designs'
   - '@storybook/addon-essentials'
   - '@storybook/addon-a11y'
-  - '@storybook/addon-mdx-gfm'
   - '@storybook/builder-webpack5'
   - '@storybook/manager-webpack5'
   - '@storybook/react-webpack5'
-  - 'storybook-dark-mode'
   - 'react-syntax-highlighter'
   - 'style-loader'
   - 'css-loader'
@@ -84,8 +83,6 @@ ignores:
   - '@babel/plugin-transform-logical-assignment-operators'
   # used in image optimization script
   - 'sharp'
-  - 'imagemin'
-  - 'imagemin-gifsicle'
   # trezor
   - 'ts-mixer'
   - '@testing-library/dom'
@@ -99,6 +96,8 @@ ignores:
   - '@metamask/bitcoin-wallet-snap'
   - '@metamask/solana-wallet-snap'
   - '@metamask/institutional-wallet-snap'
+  - '@metamask/gator-permissions-snap'
+  - '@metamask/permissions-kernel-snap'
 
 # files depcheck should not parse
 ignorePatterns:
