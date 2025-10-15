@@ -16,6 +16,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hardcode update workflow temp fix
 - Disabled workflows for testing
 - bump semvar version to 13.4.2
+- bump semvar version to 13.4.1
+- bump semvar version to 13.3.2
+- Update attributions
+- Update attributions
+- Update Attributions
+- Bumping version to 13.1.2
+- Bumping version to 13.1.1
+- Update Attributions
+- Update Attributions
+- Fixing an error in the code
+- Fixing a error
+- Hardcode update workflow temp fix
+- Disabled workflows for testing
+- bump semvar version to 13.4.2
 - chore: Bump Snaps packages (#36613)
 - Fixed a bug where first permitting accounts via the EVM provider would cause all requests to the Solana Wallet Standard provider (#36434)
   to fail with an `The requested account and/or method has not been
@@ -144,7 +158,7 @@ authorized by the user.` error until the user fully revoked dapp
 - Removed metametrics consent screen for social logins in chromium browsers (#35583)
 - Add multichain account networks subtitle (#35862)
 - As this is behind a local feature gate, there are no public facing changes. (#35193)
-- feat: bump solana snap (#35511) (#35511)
+- feat: bump solana snap (#35511)
 - feat: bump solana snap (#35511)
 - feat: adding utility method for routing to send page (#35505)
 - feat: capture amount metrics events (#35503)
@@ -158,6 +172,9 @@ authorized by the user.` error until the user fully revoked dapp
 
 ### Fixed
 
+- fix(master sync): some conflicts not properly resolved during master sync
+- fix(unit test): update snapshot from multichain bridge quote card
+- fix(quote card test file): remove duplicate slippage
 - Fixed issue with non-evm network assets not showing on first install unless the user changed networks manually (#36755)
 - N/A (#36741)
 - Update notifications enabled by default feature flag to control rollout (#36724)
