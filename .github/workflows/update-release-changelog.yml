@@ -5,7 +5,7 @@ name: Update Release Changelog PR
 on:
   push:
     branches:
-      - 'release/*'
+      - 'release/[0-9]+.[0-9]+.[0-9]+'
 
 concurrency:
   group: update-release-changelog-${{ github.ref }}
@@ -13,16 +13,15 @@ concurrency:
 
 jobs:
   refresh-changelog:
-    if: github.ref_name matches '^release/[0-9]+\.[0-9]+\.[0-9]+$'
     permissions:
       contents: write
       pull-requests: write
-    uses: MetaMask/github-tools/.github/workflows/update-release-changelog.yml@INFRA-2576-UpdateChangelogAutomatically
+    uses: MetaMask/github-tools/.github/workflows/update-release-changelog.yml@36dc168896c1b496f35fc880ee8a3625b4b837ba
     with:
       release-branch: ${{ github.ref_name }}
       repository-url: https://github.com/MetaMask/metamask-extension
       platform: extension
-      github-tools-version: INFRA-2576-UpdateChangelogAutomatically
+      github-tools-version: 36dc168896c1b496f35fc880ee8a3625b4b837ba
       previous-version-ref: null
     secrets:
       github-token: ${{ secrets.PR_TOKEN }}
