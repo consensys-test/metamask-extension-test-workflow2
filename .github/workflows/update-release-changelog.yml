@@ -5,8 +5,7 @@ name: Update Release Changelog PR
 on:
   push:
     branches:
-      - 'Version-v*'
-      - 'release/[0-9]+.[0-9]+.[0-9]+'
+      - 'release/*'
 
 concurrency:
   group: update-release-changelog-${{ github.ref }}
@@ -14,6 +13,7 @@ concurrency:
 
 jobs:
   refresh-changelog:
+    if: github.ref_name matches '^release/[0-9]+\.[0-9]+\.[0-9]+$'
     permissions:
       contents: write
       pull-requests: write
