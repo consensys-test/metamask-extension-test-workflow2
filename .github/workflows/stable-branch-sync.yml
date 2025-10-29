@@ -44,3 +44,4 @@ jobs:
       repo-type: 'extension' # Accepts 'mobile' or 'extension'
       github-tools-version: 'INFRA-3041-StableBranchSync'
       stable-branch-name: 'stable' # Defaults to `stable`
+
