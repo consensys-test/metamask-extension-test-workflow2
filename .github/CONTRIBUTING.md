@@ -39,3 +39,4 @@ When you're done with your project / bugfix / feature and ready to submit a PR, 
     - revert: Reverts a previous commit
 
 And that's it! Thanks for helping out.
+
