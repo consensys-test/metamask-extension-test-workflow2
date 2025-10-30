@@ -186,6 +186,7 @@ import {
 } from '../../shared/lib/trace';
 import fetchWithCache from '../../shared/lib/fetch-with-cache';
 import { MultichainNetworks } from '../../shared/constants/multichain/networks';
+import { ALLOWED_BRIDGE_CHAIN_IDS } from '../../shared/constants/bridge';
 ///: BEGIN:ONLY_INCLUDE_IF(multichain)
 import { MultichainWalletSnapClient } from '../../shared/lib/accounts';
 ///: END:ONLY_INCLUDE_IF
@@ -757,16 +758,6 @@ export default class MetamaskController extends EventEmitter {
       },
     );
 
-    this.userOperationController.hub.on(
-      'user-operation-added',
-      this._onUserOperationAdded.bind(this),
-    );
-
-    this.userOperationController.hub.on(
-      'transaction-updated',
-      this._onUserOperationTransactionUpdated.bind(this),
-    );
-
     // on/off shield controller based on shield subscription
     this.controllerMessenger.subscribe(
       'SubscriptionController:stateChange',
@@ -895,6 +886,8 @@ export default class MetamaskController extends EventEmitter {
                 ),
               isRelaySupported,
               getSendBundleSupportedChains,
+              isAuxiliaryFundsSupported: (chainId) =>
+                ALLOWED_BRIDGE_CHAIN_IDS.includes(chainId),
             },
             this.controllerMessenger,
           ),
@@ -930,6 +923,8 @@ export default class MetamaskController extends EventEmitter {
                   getSecurityAlertsConfig:
                     this.getSecurityAlertsConfig.bind(this),
                 }),
+              isAuxiliaryFundsSupported: (chainId) =>
+                ALLOWED_BRIDGE_CHAIN_IDS.includes(chainId),
             },
             this.controllerMessenger,
           ),
@@ -2282,7 +2277,7 @@ export default class MetamaskController extends EventEmitter {
           preferencesController,
         ),
       ///: END:ONLY_INCLUDE_IF
-      ///: BEGIN:ONLY_INCLUDE_IF(build-flask)
+      ///: BEGIN:ONLY_INCLUDE_IF(build-flask,build-experimental)
       setWatchEthereumAccountEnabled:
         preferencesController.setWatchEthereumAccountEnabled.bind(
           preferencesController,
@@ -2597,10 +2592,6 @@ export default class MetamaskController extends EventEmitter {
 
       isNftOwner: nftController.isNftOwner.bind(nftController),
 
-      // TransactionController
-      updateIncomingTransactions:
-        txController.updateIncomingTransactions.bind(txController),
-
       // AddressController
       setAddressBook: addressBookController.set.bind(addressBookController),
       removeFromAddressBook: addressBookController.delete.bind(
@@ -2719,6 +2710,8 @@ export default class MetamaskController extends EventEmitter {
           appStateController,
         ),
 
+      setAppActiveTab:
+        appStateController.setAppActiveTab.bind(appStateController),
       // EnsController
       tryReverseResolveAddress:
         ensController.reverseResolveAddress.bind(ensController),
@@ -3009,6 +3002,10 @@ export default class MetamaskController extends EventEmitter {
           this.controllerMessenger,
           `${BRIDGE_CONTROLLER_NAME}:${BridgeBackgroundAction.TRACK_METAMETRICS_EVENT}`,
         ),
+      [BridgeBackgroundAction.FETCH_QUOTES]: this.controllerMessenger.call.bind(
+        this.controllerMessenger,
+        `${BRIDGE_CONTROLLER_NAME}:${BridgeBackgroundAction.FETCH_QUOTES}`,
+      ),
 
       // Bridge Tx submission
       [BridgeStatusAction.SUBMIT_TX]: this.controllerMessenger.call.bind(
@@ -7888,8 +7885,15 @@ export default class MetamaskController extends EventEmitter {
   set isClientOpen(open) {
     this._isClientOpen = open;
 
-    // Notify Snaps that the client is open or closed.
-    this.controllerMessenger.call('SnapController:setClientActive', open);
+    const { isUnlocked } = this.controllerMessenger.call(
+      'KeyringController:getState',
+    );
+
+    if (isUnlocked) {
+      // Notify Snaps that the client is open or closed when the client is
+      // unlocked.
+      this.controllerMessenger.call('SnapController:setClientActive', open);
+    }
 
     if (open) {
       this.controllerMessenger.call('BackendWebSocketService:connect');
@@ -8505,58 +8509,6 @@ export default class MetamaskController extends EventEmitter {
       {
         matomoEvent: true,
       },
-    );
-  }
-
-  _onUserOperationAdded(userOperationMeta) {
-    const transactionMeta = this.txController.state.transactions.find(
-      (tx) => tx.id === userOperationMeta.id,
-    );
-
-    if (!transactionMeta) {
-      return;
-    }
-
-    if (transactionMeta.type === TransactionType.swap) {
-      this.controllerMessenger.publish(
-        'TransactionController:transactionNewSwap',
-        { transactionMeta },
-      );
-    } else if (transactionMeta.type === TransactionType.swapApproval) {
-      this.controllerMessenger.publish(
-        'TransactionController:transactionNewSwapApproval',
-        { transactionMeta },
-      );
-    }
-  }
-
-  _onUserOperationTransactionUpdated(transactionMeta) {
-    const updatedTransactionMeta = {
-      ...transactionMeta,
-      txParams: {
-        ...transactionMeta.txParams,
-        from: this.accountsController.getSelectedAccount().address,
-      },
-    };
-
-    const transactionExists = this.txController.state.transactions.some(
-      (tx) => tx.id === updatedTransactionMeta.id,
-    );
-
-    if (!transactionExists) {
-      this.txController.update((state) => {
-        state.transactions.push(updatedTransactionMeta);
-      });
-    }
-
-    this.txController.updateTransaction(
-      updatedTransactionMeta,
-      'Generated from user operation',
-    );
-
-    this.controllerMessenger.publish(
-      'TransactionController:transactionStatusUpdated',
-      { transactionMeta: updatedTransactionMeta },
     );
   }
 
