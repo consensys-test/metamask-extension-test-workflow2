@@ -63,7 +63,7 @@ jobs:
           head-branch-pattern: '^version-bump/[0-9]+\.[0-9]+\.[0-9]+$'
           merge-method: 'squash'
           verify-version-bump: true
-          github-token: ${{ secrets.METAMASK_EXTENSION_BRANCH_SYNC_TOKEN }}
+          github-token: ${{ secrets.HOWARD_PAT }}
 
       - name: Merge approved stable main PR
         if: ${{ steps.check-branch.outputs.stable-main == 'true' }}
@@ -74,4 +74,4 @@ jobs:
           required-base-branch: 'main'
           head-branch-pattern: '^stable-main-[0-9]+\.[0-9]+\.[0-9]+$'
           merge-method: 'merge'
-          github-token: ${{ secrets.METAMASK_EXTENSION_BRANCH_SYNC_TOKEN }}
+          github-token: ${{ secrets.HOWARD_PAT }}
