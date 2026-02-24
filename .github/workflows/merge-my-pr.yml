@@ -17,7 +17,8 @@ jobs:
       github.event.comment.body == 'Merge my PR' &&
       (
         github.event.comment.author_association == 'MEMBER' ||
-        github.event.comment.author_association == 'OWNER'
+        github.event.comment.author_association == 'OWNER' ||
+        github.event.comment.author_association == 'COLLABORATOR'
       )
     runs-on: ubuntu-latest
     permissions:
@@ -29,7 +30,7 @@ jobs:
         env:
           PR_NUMBER: ${{ github.event.issue.number }}
         with:
-          github-token: ${{ github.token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             // Fetch full details of the pull request associated with the comment
             const { data: pr } = await github.rest.pulls.get({
@@ -54,7 +55,7 @@ jobs:
 
       - name: Merge approved version bump PR
         if: ${{ steps.check-branch.outputs.version-bump == 'true' }}
-        uses: MetaMask/github-tools/.github/actions/merge-approved-pr@main
+        uses: MetaMask/github-tools/.github/actions/merge-approved-pr@test-merge-approved-pr
         with:
           pr-number: ${{ github.event.issue.number }}
           # Merge PRs from version-bump/X.Y.Z into main
@@ -66,7 +67,7 @@ jobs:
 
       - name: Merge approved stable main PR
         if: ${{ steps.check-branch.outputs.stable-main == 'true' }}
-        uses: MetaMask/github-tools/.github/actions/merge-approved-pr@main
+        uses: MetaMask/github-tools/.github/actions/merge-approved-pr@test-merge-approved-pr
         with:
           pr-number: ${{ github.event.issue.number }}
           # Merge PRs from stable-main-X.Y.Z into main
