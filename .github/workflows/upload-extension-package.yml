@@ -28,6 +28,20 @@ jobs:
 
           ls -lh "metamask-chrome-${{ inputs.version }}.zip"
 
+      # The build system injects a dev 'key' into manifest.json which is
+      # tied to the upstream MetaMask extension ID. The Chrome Web Store
+      # rejects uploads where the key doesn't match the target extension.
+      - name: Strip manifest key from zip
+        run: |
+          ZIP="metamask-chrome-${{ inputs.version }}.zip"
+          mkdir -p /tmp/extension
+          unzip -q "$ZIP" -d /tmp/extension
+          jq 'del(.key) | .version = "${{ inputs.version }}"' /tmp/extension/manifest.json > /tmp/extension/manifest-tmp.json
+          mv /tmp/extension/manifest-tmp.json /tmp/extension/manifest.json
+          cd /tmp/extension
+          zip -r -q "$GITHUB_WORKSPACE/$ZIP" .
+          echo "Stripped 'key' from manifest.json and re-zipped"
+
       - name: Authenticate to Google Cloud
         id: auth
         uses: google-github-actions/auth@v2
