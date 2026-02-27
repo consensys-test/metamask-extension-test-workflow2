@@ -1,0 +1,90 @@
+name: Upload Extension from GitHub Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version to upload (e.g. 13.21.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release asset
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Downloading metamask-chrome-${{ inputs.version }}.zip from release v${{ inputs.version }}..."
+
+          gh release download "v${{ inputs.version }}" \
+            --repo "${{ github.repository }}" \
+            --pattern "metamask-chrome-${{ inputs.version }}.zip"
+
+          ls -lh "metamask-chrome-${{ inputs.version }}.zip"
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.WIF_SERVICE_ACCOUNT }}
+          token_format: 'access_token'
+          access_token_scopes: 'https://www.googleapis.com/auth/chromewebstore'
+
+      # Upload the release zip to the existing draft extension.
+      # Uses PUT (update) instead of POST (insert) against the item's EXTENSION_ID.
+      # The publisherEmail parameter is required because WIF tokens carry no email identity.
+      # This only updates the draft — it does NOT publish the extension publicly.
+      - name: Upload to Chrome Web Store
+        run: |
+          echo "Updating extension: ${{ vars.EXTENSION_ID }}"
+          echo "Publishing as: ${{ vars.PUBLISHER_EMAIL }}"
+          echo "Version: ${{ inputs.version }}"
+          echo "Zip size: $(stat --format=%s "metamask-chrome-${{ inputs.version }}.zip") bytes"
+          echo ""
+
+          HTTP_CODE=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+            -X PUT \
+            -H "Authorization: Bearer ${{ steps.auth.outputs.access_token }}" \
+            -H "x-goog-api-version: 2" \
+            -T "metamask-chrome-${{ inputs.version }}.zip" \
+            "https://www.googleapis.com/upload/chromewebstore/v1.1/items/${{ vars.EXTENSION_ID }}?uploadType=media&publisherEmail=${{ vars.PUBLISHER_EMAIL }}")
+
+          echo "HTTP Status: $HTTP_CODE"
+          echo ""
+          cat /tmp/response.json
+          echo ""
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Upload failed with HTTP $HTTP_CODE"
+            exit 1
+          fi
+
+          echo "Draft updated successfully with v${{ inputs.version }}. The extension has NOT been published."
+
+      # Optional: Publish the draft to the Chrome Web Store.
+      # Uncomment this step to make the extension publicly visible after upload.
+      # - name: Publish Extension
+      #   run: |
+      #     HTTP_CODE=$(curl -s -o /tmp/publish-response.json -w "%{http_code}" \
+      #       -X POST \
+      #       -H "Authorization: Bearer ${{ steps.auth.outputs.access_token }}" \
+      #       -H "x-goog-api-version: 2" \
+      #       -H "Content-Length: 0" \
+      #       "https://www.googleapis.com/chromewebstore/v1.1/items/${{ vars.EXTENSION_ID }}/publish?publisherEmail=${{ vars.PUBLISHER_EMAIL }}")
+      #
+      #     echo "HTTP Status: $HTTP_CODE"
+      #     cat /tmp/publish-response.json
+      #
+      #     if [ "$HTTP_CODE" != "200" ]; then
+      #       echo "::error::Publish failed with HTTP $HTTP_CODE"
+      #       exit 1
+      #     fi
+      #
+      #     echo "Extension published successfully."
