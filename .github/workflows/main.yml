@@ -715,7 +715,7 @@ jobs:
       - build-source-map-explorer
       - build-lavamoat-viz
       - trigger-regression-validation
-      - merge-queue-test-fail  # TODO(POC): Remove after merge-queue-validator testing
+      - merge-queue-test-fail # TODO(POC): Remove after merge-queue-validator testing
     steps:
       - name: Check that all jobs have passed
         env:
