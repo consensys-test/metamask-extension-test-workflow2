@@ -776,7 +776,7 @@ jobs:
               status: 'completed',
               conclusion,
               output: {
-                title: `All jobs ${conclusion}`,
+                title: `${conclusion == 'success' ? 'Successful' : 'Failing'} (from all-jobs-pass Checks API)`,
                 summary: `Main workflow ${conclusion}. [View run](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`,
               },
             });
