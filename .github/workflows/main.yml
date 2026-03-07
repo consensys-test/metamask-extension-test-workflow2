@@ -669,7 +669,7 @@ jobs:
           exit 1
 
   all-jobs-pass:
-    name: All jobs pass
+    name: All jobs pass (initiator)
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
@@ -757,10 +757,10 @@ jobs:
 
           echo "All required jobs either passed or were skipped"
 
-      # Create the "Merge Queue Gate" required check for all events EXCEPT
+      # Create the 'All jobs pass' required check for all events EXCEPT
       # merge_group failures — those are handled by the Merge Queue Validator
       # workflow, which retries failed jobs before reporting the final result.
-      - name: Create Merge Queue Gate check
+      - name: Create 'All jobs pass' check
         if: ${{ !failure() || github.event_name != 'merge_group' }}
         uses: actions/github-script@v7
         env:
@@ -771,7 +771,7 @@ jobs:
             const result = await github.rest.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              name: 'Merge Queue Gate',
+              name: 'All jobs pass',
               head_sha: context.sha,
               status: 'completed',
               conclusion,

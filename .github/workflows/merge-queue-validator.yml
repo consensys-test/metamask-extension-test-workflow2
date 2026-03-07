@@ -3,10 +3,10 @@
 # How it works:
 # - workflow_run fires for every Main completion, but this job only runs
 #   for merge_group failures (all other events are handled by the
-#   "Create Merge Queue Gate check" step in all-jobs-pass).
+#   "Create 'All jobs pass' check" step in all-jobs-pass).
 # - Reruns failed jobs with `gh run rerun --failed`, then blocks on
 #   `gh run watch` until the rerun completes.
-# - Creates the "Merge Queue Gate" check run with the final result.
+# - Creates the 'All jobs pass' check run with the final result.
 #
 # Key findings from POC:
 # - workflow_run DOES fire for merge_group-triggered Main runs.
@@ -64,7 +64,7 @@ jobs:
           echo "RERUN_CONCLUSION=$CONCLUSION" >> "$GITHUB_ENV"
           echo "RERUN_ATTEMPT=$ATTEMPT" >> "$GITHUB_ENV"
 
-      - name: Create Merge Queue Gate check
+      - name: Create 'All jobs pass' check
         uses: actions/github-script@v7
         with:
           script: |
@@ -73,7 +73,7 @@ jobs:
             const result = await github.rest.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              name: 'Merge Queue Gate',
+              name: 'All jobs pass',
               head_sha: process.env.HEAD_SHA,
               status: 'completed',
               conclusion,
@@ -82,4 +82,4 @@ jobs:
                 summary: `Main was retried after failure. Final result: ${conclusion}. [View run](https://github.com/${process.env.REPO}/actions/runs/${process.env.MAIN_RUN_ID}).`,
               },
             });
-            core.info(`Created Merge Queue Gate check ${result.data.id}: ${conclusion}`);
+            core.info(`Created 'All jobs pass' check ${result.data.id}: ${conclusion}`);
