@@ -673,6 +673,8 @@ jobs:
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
+    permissions:
+      checks: write
     # We list every job we want to validate in `needs`, because `needs` only contains results for jobs explicitly
     # named here. A failing job can cause downstream jobs to be `skipped`, which can hide the true failure unless
     # the upstream job is also included.
@@ -754,6 +756,31 @@ jobs:
           fi
 
           echo "All required jobs either passed or were skipped"
+
+      # Create the "Merge Queue Gate" required check for all events EXCEPT
+      # merge_group failures — those are handled by the Merge Queue Validator
+      # workflow, which retries failed jobs before reporting the final result.
+      - name: Create Merge Queue Gate check
+        if: ${{ !failure() || github.event_name != 'merge_group' }}
+        uses: actions/github-script@v7
+        env:
+          CHECK_CONCLUSION: ${{ job.status == 'success' && 'success' || 'failure' }}
+        with:
+          script: |
+            const conclusion = process.env.CHECK_CONCLUSION;
+            const result = await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'Merge Queue Gate',
+              head_sha: context.sha,
+              status: 'completed',
+              conclusion,
+              output: {
+                title: `All jobs ${conclusion}`,
+                summary: `Main workflow ${conclusion}. [View run](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`,
+              },
+            });
+            core.info(`Created Merge Queue Gate check ${result.data.id}: ${conclusion}`);
 
       - name: Log merge group failure
         if: ${{ github.event_name == 'merge_group' && failure() && !github.event.repository.fork }}

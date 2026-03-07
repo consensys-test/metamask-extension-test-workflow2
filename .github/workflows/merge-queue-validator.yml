@@ -1,18 +1,17 @@
-# TODO(POC): Minimal test of the merge-queue-validator concept.
+# Retries failed merge queue jobs once before reporting the final result.
 #
-# Questions this POC answers:
-# 1. Does workflow_run fire for merge_group-triggered Main runs?
-# 2. Does workflow_run fire for PR-triggered Main runs?
-# 3. Can we create a check run ("Merge Queue Gate") via the Checks API?
-# 4. Can we gh run rerun --failed on the completed Main run?
-# 5. Does workflow_run fire again after the rerun completes?
-# 6. What does run_attempt show in the event payload?
+# How it works:
+# - workflow_run fires for every Main completion, but this job only runs
+#   for merge_group failures (all other events are handled by the
+#   "Create Merge Queue Gate check" step in all-jobs-pass).
+# - Reruns failed jobs with `gh run rerun --failed`, then blocks on
+#   `gh run watch` until the rerun completes.
+# - Creates the "Merge Queue Gate" check run with the final result.
 #
-# Findings so far:
-# 1. workflow_run DOES fire for merge_group-triggered Main runs. ✅
-# 2. gh run rerun --failed DOES work on the completed Main run. ✅
-# 3. workflow_run does NOT fire again after a rerun completes. ❌
-#    → Fix: poll for rerun completion in the same invocation.
+# Key findings from POC:
+# - workflow_run DOES fire for merge_group-triggered Main runs.
+# - workflow_run does NOT fire again after a rerun (`gh run rerun`).
+#   → That's why we watch for completion in the same invocation.
 
 name: Merge Queue Validator
 
@@ -22,8 +21,11 @@ on:
     types: [completed]
 
 jobs:
-  validate:
+  retry-and-gate:
     name: Merge Queue Gate
+    # Only run for merge_group failures — all other cases are handled
+    # by the all-jobs-pass job in main.yml.
+    if: ${{ github.event.workflow_run.event == 'merge_group' && github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -32,73 +34,42 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       MAIN_RUN_ID: ${{ github.event.workflow_run.id }}
-      MAIN_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
-      MAIN_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
-      MAIN_EVENT: ${{ github.event.workflow_run.event }}
       HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
       REPO: ${{ github.repository }}
     steps:
-      - name: Debug info
+      - name: Log failed jobs
         run: |
-          echo "=== Merge Queue Validator POC ==="
-          echo "Main run ID: $MAIN_RUN_ID"
-          echo "Main event: $MAIN_EVENT"
-          echo "Main conclusion: $MAIN_CONCLUSION"
-          echo "Main run attempt: $MAIN_ATTEMPT"
+          echo "Main failed in merge queue. Run: $MAIN_RUN_ID"
           echo "Head SHA: $HEAD_SHA"
           echo ""
-          echo "Listing failed jobs (if any):"
+          echo "Failed jobs:"
           gh run view "$MAIN_RUN_ID" --repo "$REPO" --json jobs \
-            --jq '.jobs[] | select(.conclusion == "failure") | "\(.name) — \(.conclusion)"' \
-            || echo "(could not fetch jobs)"
+            --jq '.jobs[] | select(.conclusion == "failure") | "  \(.name)"' \
+            || echo "  (could not fetch jobs)"
 
-      # For non-merge-queue events or successes: mirror Main's result immediately.
-      - name: Create check run (pass-through)
-        if: ${{ github.event.workflow_run.event != 'merge_group' || github.event.workflow_run.conclusion == 'success' }}
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const conclusion = process.env.MAIN_CONCLUSION === 'success' ? 'success' : 'failure';
-            const result = await github.rest.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'Merge Queue Gate',
-              head_sha: process.env.HEAD_SHA,
-              status: 'completed',
-              conclusion,
-              output: {
-                title: `Main ${conclusion} (attempt ${process.env.MAIN_ATTEMPT})`,
-                summary: `Event: ${process.env.MAIN_EVENT}, conclusion: ${process.env.MAIN_CONCLUSION}, attempt: ${process.env.MAIN_ATTEMPT}. [View run](https://github.com/${process.env.REPO}/actions/runs/${process.env.MAIN_RUN_ID}).`,
-              },
-            });
-            core.info(`Created check run ${result.data.id} with conclusion: ${conclusion}`);
-
-      # For merge_group failures on attempt 1: rerun, then watch until complete.
       - name: Rerun failed jobs and wait for result
-        if: ${{ github.event.workflow_run.event == 'merge_group' && github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.run_attempt == 1 }}
         run: |
-          echo "Main failed on attempt 1 in merge_group. Rerunning failed jobs..."
+          echo "Rerunning failed jobs..."
           gh run rerun "$MAIN_RUN_ID" --failed --repo "$REPO"
-          echo "Rerun triggered. Watching for completion..."
 
           # gh run watch blocks until the run completes, streaming live status.
-          # Exit code reflects the run's conclusion (0=success, 1=failure).
-          # Job-level timeout-minutes acts as the safety net.
+          # --exit-status makes it exit non-zero on failure; we capture the
+          # exit code to avoid failing this step before we create the check.
           WATCH_EXIT=0
           gh run watch "$MAIN_RUN_ID" --repo "$REPO" --exit-status || WATCH_EXIT=$?
 
           CONCLUSION=$(gh run view "$MAIN_RUN_ID" --repo "$REPO" --json conclusion --jq '.conclusion')
-          ATTEMPT=$(gh run view "$MAIN_RUN_ID" --repo "$REPO" --json runAttempt --jq '.runAttempt')
+          ATTEMPT=$(gh run view "$MAIN_RUN_ID" --repo "$REPO" --json attempt --jq '.attempt')
           echo "Rerun finished — conclusion=$CONCLUSION, attempt=$ATTEMPT (watch exit=$WATCH_EXIT)"
           echo "RERUN_CONCLUSION=$CONCLUSION" >> "$GITHUB_ENV"
           echo "RERUN_ATTEMPT=$ATTEMPT" >> "$GITHUB_ENV"
 
-      - name: Create check run after rerun
-        if: ${{ github.event.workflow_run.event == 'merge_group' && github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.run_attempt == 1 }}
+      - name: Create Merge Queue Gate check
         uses: actions/github-script@v7
         with:
           script: |
             const conclusion = process.env.RERUN_CONCLUSION === 'success' ? 'success' : 'failure';
+            const attempt = process.env.RERUN_ATTEMPT;
             const result = await github.rest.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -107,28 +78,8 @@ jobs:
               status: 'completed',
               conclusion,
               output: {
-                title: `Main ${conclusion} (attempt ${process.env.RERUN_ATTEMPT}, after retry)`,
-                summary: `Main was retried after attempt 1 failure. Final result: ${conclusion}. [View run](https://github.com/${process.env.REPO}/actions/runs/${process.env.MAIN_RUN_ID}).`,
+                title: `Main ${conclusion} (attempt ${attempt}, after retry)`,
+                summary: `Main was retried after failure. Final result: ${conclusion}. [View run](https://github.com/${process.env.REPO}/actions/runs/${process.env.MAIN_RUN_ID}).`,
               },
             });
-            core.info(`Created check run ${result.data.id} with conclusion: ${conclusion}`);
-
-      # For merge_group failures on attempt 2+: no more retries, just fail.
-      - name: Create check run (no more retries)
-        if: ${{ github.event.workflow_run.event == 'merge_group' && github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.run_attempt != 1 }}
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const result = await github.rest.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'Merge Queue Gate',
-              head_sha: process.env.HEAD_SHA,
-              status: 'completed',
-              conclusion: 'failure',
-              output: {
-                title: `Main failed (attempt ${process.env.MAIN_ATTEMPT} — no more retries)`,
-                summary: `Main failed after retry. [View run](https://github.com/${process.env.REPO}/actions/runs/${process.env.MAIN_RUN_ID}).`,
-              },
-            });
-            core.info(`Created check run ${result.data.id} with conclusion: failure`);
+            core.info(`Created Merge Queue Gate check ${result.data.id}: ${conclusion}`);
